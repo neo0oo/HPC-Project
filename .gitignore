@@ -1,0 +1,7 @@
+serial
+omp
+mpi
+hybrid
+first_match
+slurm-*.out
+__pycache__/
