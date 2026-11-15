@@ -1,0 +1,10 @@
+# One target per length (1..9), all from Romeo and Juliet. '_' = space.
+a
+oh
+the
+love
+romeo
+juliet
+capulet
+montague
+wherefore
