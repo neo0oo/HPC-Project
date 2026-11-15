@@ -26,6 +26,7 @@
 #define MONKEY_MAX_LEN     12
 #define MONKEY_MAX_TARGETS 16
 #define MONKEY_BLOCK       8192 /* characters generated per batch */
+#define MONKEY_DEFAULT_CHUNK (1ULL << 24) /* characters per chunk */
 
 typedef struct {
     int      n;                                      /* number of targets  */
@@ -138,17 +139,17 @@ static inline void monkey_fill(rng_t *r, uint8_t *buf, size_t len)
 }
 
 /*
- * Type n random characters from stream (seed, stream) and count overlapping
- * occurrences of every target. counts[k] receives the count for target k.
- * Only windows lying entirely inside the n characters are counted, so the
- * expectation is (n - L + 1) / 27^L.
+ * Core kernel: type n random characters from generator r and ADD the number
+ * of overlapping occurrences of every target to counts[k]. Only windows lying
+ * entirely inside these n characters are counted, so the expectation is
+ * (n - L + 1) / 27^L per call.
+ *
+ * Note: every target makes its own pass over each block (one rolling window
+ * per target). This is the unoptimized "before" version used as the baseline.
  */
-static inline void monkey_count(uint64_t n, uint64_t seed, uint64_t stream,
-                                const monkey_targets_t *t, uint64_t *counts)
+static inline void monkey_scan(rng_t *r, uint64_t n, const monkey_targets_t *t,
+                               uint64_t *counts)
 {
-    rng_t r;
-    rng_seed(&r, seed, stream);
-
     /* buf = [MONKEY_MAX_LEN chars carried from the previous block | block].
      * The initial carry is all zeros and every window starts at 0, which is
      * consistent (it is the value of L zero digits). Windows touching the
@@ -158,15 +159,13 @@ static inline void monkey_count(uint64_t n, uint64_t seed, uint64_t stream,
 
     uint64_t w[MONKEY_MAX_TARGETS] = {0};
     uint64_t drop[MONKEY_MAX_TARGETS]; /* 27^L: weight of outgoing char */
-    for (int k = 0; k < t->n; k++) {
-        counts[k] = 0;
+    for (int k = 0; k < t->n; k++)
         drop[k] = monkey_pow27(t->len[k]);
-    }
 
     uint64_t done = 0;
     while (done < n) {
         size_t m = (n - done < MONKEY_BLOCK) ? (size_t)(n - done) : MONKEY_BLOCK;
-        monkey_fill(&r, blk, m);
+        monkey_fill(r, blk, m);
 
         for (int k = 0; k < t->n; k++) {
             const int L = t->len[k];
@@ -197,12 +196,78 @@ static inline void monkey_count(uint64_t n, uint64_t seed, uint64_t stream,
     }
 }
 
+/*
+ * v0 kernel (original): one continuous stream of n characters from
+ * (seed, stream). counts[k] is overwritten.
+ */
+static inline void monkey_count(uint64_t n, uint64_t seed, uint64_t stream,
+                                const monkey_targets_t *t, uint64_t *counts)
+{
+    rng_t r;
+    rng_seed(&r, seed, stream);
+    for (int k = 0; k < t->n; k++)
+        counts[k] = 0;
+    monkey_scan(&r, n, t, counts);
+}
+
+/*
+ * Chunked decomposition. The n characters are split into fixed chunks of
+ * `chunk` characters (the last one may be shorter); chunk i is typed by its
+ * own generator rng_seed_chunk(seed, i) and matched independently (windows
+ * that would cross a chunk boundary are not counted).
+ *
+ * Because chunk i's text depends only on (seed, i), the total counts are
+ * bit-identical whatever the number of threads/ranks and however chunks are
+ * assigned to them. This is what makes every parallel version checkable
+ * against the serial one exactly.
+ */
+static inline uint64_t monkey_num_chunks(uint64_t n, uint64_t chunk)
+{
+    return (n + chunk - 1) / chunk;
+}
+
+static inline uint64_t monkey_chunk_len(uint64_t n, uint64_t chunk, uint64_t i)
+{
+    uint64_t start = i * chunk;
+    return (n - start < chunk) ? n - start : chunk;
+}
+
+/* Type and match chunk i, adding into counts. */
+static inline void monkey_count_chunk(uint64_t n, uint64_t chunk, uint64_t seed,
+                                      uint64_t i, const monkey_targets_t *t,
+                                      uint64_t *counts)
+{
+    rng_t r;
+    rng_seed_chunk(&r, seed, i);
+    monkey_scan(&r, monkey_chunk_len(n, chunk, i), t, counts);
+}
+
+/* Type and match chunks [first, last), adding into counts. */
+static inline void monkey_count_chunks(uint64_t n, uint64_t chunk,
+                                       uint64_t seed, uint64_t first,
+                                       uint64_t last,
+                                       const monkey_targets_t *t,
+                                       uint64_t *counts)
+{
+    for (uint64_t i = first; i < last; i++)
+        monkey_count_chunk(n, chunk, seed, i, t, counts);
+}
+
 /* Expected number of (overlapping) occurrences in n characters. */
 static inline double monkey_expected_count(uint64_t n, int L)
 {
     if (n < (uint64_t)L)
         return 0.0;
     return (double)(n - (uint64_t)L + 1) / (double)monkey_pow27(L);
+}
+
+/* Expected count when n characters are typed in chunks of `chunk`. */
+static inline double monkey_expected_count_chunked(uint64_t n, uint64_t chunk,
+                                                   int L)
+{
+    uint64_t full = n / chunk, rest = n % chunk;
+    return (double)full * monkey_expected_count(chunk, L) +
+           monkey_expected_count(rest, L);
 }
 
 /*

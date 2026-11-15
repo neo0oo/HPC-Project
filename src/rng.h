@@ -90,4 +90,27 @@ static inline void rng_seed(rng_t *r, uint64_t seed, uint64_t stream_id)
         rng_jump(r);
 }
 
+/*
+ * Seed generator r for chunk `chunk` of the run keyed by `seed`, in O(1).
+ *
+ * The state is splitmix64 outputs 4*chunk .. 4*chunk+3 of the sequence that
+ * starts at `seed` (splitmix64 is a counter run through a bijective mixer, so
+ * no two chunks ever receive the same state; this is the seeding method
+ * recommended by the xoshiro authors). Each chunk then uses a short stretch
+ * (<= 2^40 draws) of a 2^256-1 period, so overlap between chunks has
+ * negligible probability.
+ *
+ * Chunk 0 gets exactly the state rng_seed(r, seed, 0) gives, so a run with a
+ * single chunk reproduces the original single-stream (v0) kernel.
+ */
+static inline void rng_seed_chunk(rng_t *r, uint64_t seed, uint64_t chunk)
+{
+    uint64_t sm = seed + 4 * chunk * 0x9E3779B97F4A7C15ULL;
+    for (int i = 0; i < 4; i++)
+        r->s[i] = splitmix64(&sm);
+
+    if ((r->s[0] | r->s[1] | r->s[2] | r->s[3]) == 0)
+        r->s[0] = 1;
+}
+
 #endif /* RNG_H */

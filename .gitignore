@@ -5,3 +5,6 @@ hybrid
 first_match
 slurm-*.out
 __pycache__/
+bin/
+build/
+.venv/

@@ -1,0 +1,18 @@
+# 16 five-letter words from Romeo and Juliet, for the number-of-targets sweep
+# (same length, so only the number of targets changes).
+romeo
+death
+night
+sword
+heart
+nurse
+friar
+paris
+light
+grave
+blood
+peace
+tears
+watch
+lords
+house
