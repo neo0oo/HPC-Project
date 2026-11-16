@@ -64,6 +64,9 @@ def summarize(path: Path, mode: str) -> list[dict]:
                 if tt == t and c["mean_mhz_busy"]]
         return statistics.median(vals) if vals else None
 
+    if 1 not in by_t:
+        sys.exit(f"{path}: no threads=1 run yet ({len(runs)} runs so far) - "
+                 "job still running or failed; check results/logs/")
     t1 = statistics.median(float(r["time_s"]) for r in by_t[1])
     mhz1 = mhz_for(1)
     table = []

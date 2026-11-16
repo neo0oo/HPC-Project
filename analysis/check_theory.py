@@ -41,7 +41,7 @@ def main() -> int:
     ap.add_argument("-n", type=lambda s: int(float(s)), default=200_000_000)
     ap.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3])
     ap.add_argument("--targets", default="a,the,love,romeo")
-    ap.add_argument("--kernel", choices=["chunked", "v0"], default="chunked")
+    ap.add_argument("--kernel", choices=["chunked", "v0", "fused"], default="chunked")
     ap.add_argument("--chunk", default=None, help="passed to -c (e.g. 2^20)")
     ap.add_argument("--threshold", type=float, default=4.0)
     args = ap.parse_args()

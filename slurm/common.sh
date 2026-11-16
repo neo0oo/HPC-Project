@@ -12,6 +12,8 @@
 #                               append_csv while sampling CPU MHz/utilization
 #   phys_cores / logical_cpus   cores / hardware threads this job may use
 #   pow2_upto <n>               1 2 4 ... <= n, plus n itself
+#   SRUN                        MPI launcher: srun with the PMIx plugin
+#   targets <list>              targets from data/targets/<list>.txt
 
 set -euo pipefail
 
@@ -95,6 +97,11 @@ run_sampled() {
     kill -TERM "$spid" 2>/dev/null || true
     wait "$spid" 2>/dev/null || true
 }
+
+# MPI launcher. OpenMPI 4.1.5 (EESSI) is started by Slurm through PMIx.
+SRUN="${SRUN:-srun --mpi=pmix}"
+
+targets() { grep -v '^#' "data/targets/$1.txt"; }
 
 record_env
 echo "cores=$(phys_cores) hw_threads=$(logical_cpus)" | tee -a "results/logs/${JOBTAG}.env"

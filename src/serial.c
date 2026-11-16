@@ -7,6 +7,7 @@
  *
  * -k chunked (default): n is typed as independent chunks, so the counts are
  *    identical to every parallel version for the same (n, chunk, seed).
+ * -k fused: optimized single-pass kernel, same characters, same counts.
  * -k v0: the original single continuous stream, kept as the reference for
  *    measuring the cost of the chunked decomposition.
  */
@@ -20,16 +21,21 @@ int main(int argc, char **argv)
     if (rc >= 0)
         return rc;
 
+    monkey_work_t work;
+    work_init(&work, o.kernel, &targets);
+
     uint64_t counts[MONKEY_MAX_TARGETS] = {0};
     double t0 = now_s();
-    if (o.kernel == KERNEL_V0)
+    if (o.kernel == KERNEL_V0) {
         monkey_count(o.n, o.seed, 0, &targets, counts);
-    else
-        monkey_count_chunks(o.n, o.chunk, o.seed, 0,
-                            monkey_num_chunks(o.n, o.chunk), &targets, counts);
+    } else {
+        uint64_t nchunks = monkey_num_chunks(o.n, o.chunk);
+        for (uint64_t i = 0; i < nchunks; i++)
+            work_chunk(&work, o.n, o.chunk, o.seed, i, counts);
+    }
     double elapsed = now_s() - t0;
 
     monkey_print_csv("serial", 1, 1, &o, &targets, counts, elapsed, elapsed,
-                     elapsed);
+                     elapsed, 0.0);
     return 0;
 }

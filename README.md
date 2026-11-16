@@ -15,7 +15,9 @@ bin/serial -n 1e9 -t romeo,juliet -H
 python3 analysis/theory.py --rate 3e8 --cores 64 wherefore
 ```
 
-Options (shared by every version): `-n` characters (`1e9`, `2^30`), `-t` comma-separated targets (`_` = space), `-s` seed, `-c` chunk size (default `2^24`), `-k chunked|v0`, `-H` CSV header.
+Programs: `serial`, `omp`, `mpi`, `hybrid` (MPI+OpenMP), `first_match`, `prof`, plus `make cuda` and `make acc`.
+
+Options (shared by every version): `-n` characters (`1e9`, `2^30`), `-t` comma-separated targets (`_` = space), `-s` seed, `-c` chunk size (default `2^24`), `-k chunked|fused|v0` (baseline, optimized, original single stream), `-H` CSV header.
 
 ## How the work is decomposed
 
@@ -24,7 +26,10 @@ The n characters are split into fixed chunks. Chunk i is typed by its own genera
 ## Layout
 
 ```
-src/        monkey.h (kernel + theory), rng.h (xoshiro256**), cli.h (options/CSV), serial.c, ...
+src/        monkey.h (baseline kernel + theory), fused.h (optimized kernel), kernels.h,
+            rng.h (xoshiro256**), cli.h (options/CSV), serial.c, omp.c, mpi.c (mpi + hybrid),
+            first_match.c (time-to-solution), prof.c (profiling), acc.c (OpenACC), mpi_stub/
+cuda/       monkey.cu (CUDA version)
 env/        modules.sh (toolchain), cluster/ (probe output per node type)
 slurm/      one .sbatch per experiment, common.sh, run_all.sh
 data/       targets/*.txt

@@ -111,7 +111,7 @@ static inline int monkey_parse_targets(const char *spec, monkey_targets_t *t)
 }
 
 /* Uniform draw in 0..26 from 32 random bits (Lemire, with rejection). */
-static inline uint8_t monkey_draw(uint32_t x, rng_t *r)
+RNG_HD uint8_t monkey_draw(uint32_t x, rng_t *r)
 {
     uint64_t m = (uint64_t)x * MONKEY_K;
     uint32_t lo = (uint32_t)m;

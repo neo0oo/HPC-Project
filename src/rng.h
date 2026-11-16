@@ -10,11 +10,17 @@
 
 #include <stdint.h>
 
+/* RNG_HD lets the same functions compile for CUDA (__host__ __device__) or
+ * OpenACC (acc routine seq); plain C gets static inline. */
+#ifndef RNG_HD
+#define RNG_HD static inline
+#endif
+
 typedef struct {
     uint64_t s[4];
 } rng_t;
 
-static inline uint64_t splitmix64(uint64_t *x)
+RNG_HD uint64_t splitmix64(uint64_t *x)
 {
     uint64_t z = (*x += 0x9E3779B97F4A7C15ULL);
     z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
@@ -22,13 +28,13 @@ static inline uint64_t splitmix64(uint64_t *x)
     return z ^ (z >> 31);
 }
 
-static inline uint64_t rng_rotl(uint64_t x, int k)
+RNG_HD uint64_t rng_rotl(uint64_t x, int k)
 {
     return (x << k) | (x >> (64 - k));
 }
 
 /* Next 64 random bits. */
-static inline uint64_t rng_next(rng_t *r)
+RNG_HD uint64_t rng_next(rng_t *r)
 {
     uint64_t *s = r->s;
     const uint64_t result = rng_rotl(s[1] * 5, 7) * 9;
@@ -103,7 +109,7 @@ static inline void rng_seed(rng_t *r, uint64_t seed, uint64_t stream_id)
  * Chunk 0 gets exactly the state rng_seed(r, seed, 0) gives, so a run with a
  * single chunk reproduces the original single-stream (v0) kernel.
  */
-static inline void rng_seed_chunk(rng_t *r, uint64_t seed, uint64_t chunk)
+RNG_HD void rng_seed_chunk(rng_t *r, uint64_t seed, uint64_t chunk)
 {
     uint64_t sm = seed + 4 * chunk * 0x9E3779B97F4A7C15ULL;
     for (int i = 0; i < 4; i++)

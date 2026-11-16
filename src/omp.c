@@ -25,10 +25,12 @@ int main(int argc, char **argv)
     int rc = monkey_parse_opts(argc, argv, &o, &targets);
     if (rc >= 0)
         return rc;
-    if (o.kernel != KERNEL_CHUNKED) {
-        fprintf(stderr, "error: omp supports only the chunked kernel\n");
+    if (o.kernel == KERNEL_V0) {
+        fprintf(stderr, "error: v0 is serial only (use chunked or fused)\n");
         return 2;
     }
+    monkey_work_t work;
+    work_init(&work, o.kernel, &targets);
 
     /* Default schedule dynamic,1 unless OMP_SCHEDULE says otherwise. */
     if (getenv("OMP_SCHEDULE") == NULL)
@@ -47,7 +49,7 @@ int main(int argc, char **argv)
 
 #pragma omp for schedule(runtime) nowait
         for (uint64_t i = 0; i < nchunks; i++)
-            monkey_count_chunk(o.n, o.chunk, o.seed, i, &targets, local);
+            work_chunk(&work, o.n, o.chunk, o.seed, i, local);
 
         double busy = omp_get_wtime() - b0;
 #pragma omp critical
@@ -63,6 +65,6 @@ int main(int argc, char **argv)
     double elapsed = omp_get_wtime() - t0;
 
     monkey_print_csv("omp", 1, nthreads, &o, &targets, counts, elapsed,
-                     busy_min, busy_max);
+                     busy_min, busy_max, 0.0);
     return 0;
 }
