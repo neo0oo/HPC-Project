@@ -29,6 +29,7 @@ int main(int argc, char **argv)
                             monkey_num_chunks(o.n, o.chunk), &targets, counts);
     double elapsed = now_s() - t0;
 
-    monkey_print_csv("serial", 1, 1, &o, &targets, counts, elapsed);
+    monkey_print_csv("serial", 1, 1, &o, &targets, counts, elapsed, elapsed,
+                     elapsed);
     return 0;
 }

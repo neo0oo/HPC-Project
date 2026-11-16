@@ -5,6 +5,10 @@
 CC     ?= cc
 CFLAGS ?= -O3 -std=gnu11 -Wall -Wextra
 LDLIBS ?= -lm
+# OpenMP flags. macOS + Homebrew libomp:
+#   make OMPFLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" OMPLIBS="-L$(brew --prefix libomp)/lib -lomp"
+OMPFLAGS ?= -fopenmp
+OMPLIBS  ?= -fopenmp
 PYTHON ?= python3
 BIN    ?= bin
 
@@ -16,7 +20,7 @@ COMMON := src/rng.h src/monkey.h src/cli.h
 
 .PHONY: all test flags clean
 
-all: $(BIN)/serial
+all: $(BIN)/serial $(BIN)/omp
 
 $(BIN):
 	mkdir -p $@
@@ -24,10 +28,16 @@ $(BIN):
 $(BIN)/serial: src/serial.c $(COMMON) | $(BIN)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LDLIBS)
 
-test: $(BIN)/serial
+$(BIN)/omp: src/omp.c $(COMMON) | $(BIN)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(OMPFLAGS) -o $@ $< $(LDLIBS) $(OMPLIBS)
+
+test: all
 	$(PYTHON) analysis/check_theory.py --bin $(BIN)/serial
 	$(PYTHON) analysis/check_theory.py --bin $(BIN)/serial --kernel v0
 	$(PYTHON) analysis/check_repro.py --bin $(BIN)/serial
+	OMP_NUM_THREADS=4 $(PYTHON) analysis/check_theory.py --bin $(BIN)/omp
+	for t in 1 3 8; do OMP_NUM_THREADS=$$t $(PYTHON) analysis/check_repro.py --bin $(BIN)/serial --compare $(BIN)/omp || exit 1; done
+	OMP_NUM_THREADS=5 OMP_SCHEDULE=static $(PYTHON) analysis/check_repro.py --bin $(BIN)/serial --compare $(BIN)/omp
 
 flags:
 	@echo "CC=$(CC)"
@@ -35,6 +45,7 @@ flags:
 	@echo "CPPFLAGS=$(CPPFLAGS)"
 	@echo "CFLAGS=$(CFLAGS)"
 	@echo "LDLIBS=$(LDLIBS)"
+	@echo "OMPFLAGS=$(OMPFLAGS) OMPLIBS=$(OMPLIBS)"
 
 clean:
 	rm -rf bin build

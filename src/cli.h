@@ -23,7 +23,7 @@
 
 #define CSV_HEADER                                                         \
     "version,kernel,ranks,threads,n,chunk,seed,target,len,count,expected," \
-    "time_s,chars_per_s,host,git"
+    "time_s,chars_per_s,host,git,busy_min_s,busy_max_s"
 
 enum { KERNEL_CHUNKED = 0, KERNEL_V0 = 1 };
 
@@ -157,11 +157,16 @@ static inline int monkey_parse_opts(int argc, char **argv, monkey_opts_t *o,
     return -1;
 }
 
-/* Print one CSV row per target. */
+/*
+ * Print one CSV row per target. busy_min/busy_max: shortest and longest time
+ * any single worker (thread or rank x thread) spent computing; their ratio
+ * measures load imbalance (serial: both equal elapsed).
+ */
 static inline void monkey_print_csv(const char *version, int ranks,
                                     int threads, const monkey_opts_t *o,
                                     const monkey_targets_t *t,
-                                    const uint64_t *counts, double elapsed)
+                                    const uint64_t *counts, double elapsed,
+                                    double busy_min, double busy_max)
 {
     char host[256] = "unknown";
     gethostname(host, sizeof host - 1);
@@ -175,10 +180,11 @@ static inline void monkey_print_csv(const char *version, int ranks,
         double expected = v0 ? monkey_expected_count(o->n, L)
                              : monkey_expected_count_chunked(o->n, o->chunk, L);
         printf("%s,%s,%d,%d,%" PRIu64 ",%" PRIu64 ",%" PRIu64 ",%s,%d,%" PRIu64
-               ",%.10g,%.6f,%.0f,%s,%s\n",
+               ",%.10g,%.6f,%.0f,%s,%s,%.6f,%.6f\n",
                version, v0 ? "v0" : "chunked", ranks, threads, o->n,
                v0 ? o->n : o->chunk, o->seed, t->text[k], L, counts[k],
-               expected, elapsed, (double)o->n / elapsed, host, GIT_SHA);
+               expected, elapsed, (double)o->n / elapsed, host, GIT_SHA,
+               busy_min, busy_max);
     }
     fflush(stdout);
 }

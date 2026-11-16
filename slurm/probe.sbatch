@@ -52,7 +52,7 @@ section() { echo; echo "=== $*"; }
         printf "%-15s %s\n" "$t" "$(command -v $t || echo '-')"
     done
     section "modules of interest"
-    module -t avail 2>&1 | grep -iE "gcc|openmpi|intel|nvhpc|cuda|likwid|papi|perf|python|scipy|matplotlib" | sort -u
+    module -t avail 2>&1 | grep -iE "^(gcc|openmpi|intel|nvhpc|cuda|hpc-course|likwid|papi|score-p|extrae|paraver|python|scipy-bundle|matplotlib)/" | sort -u
     if command -v nvidia-smi >/dev/null; then
         section "gpu"
         nvidia-smi --query-gpu=name,memory.total,compute_cap,driver_version --format=csv

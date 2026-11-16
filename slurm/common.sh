@@ -8,6 +8,10 @@
 #   record_env writes results/logs/$JOBTAG.env (provenance of this run)
 #   csv_for <experiment>        prints results/raw/<experiment>/<job-id>.csv
 #   append_csv <file> <cmd...>  runs cmd, appends CSV rows, header once
+#   run_sampled <freq.csv> <label> <csv> <cmd...>
+#                               append_csv while sampling CPU MHz/utilization
+#   phys_cores / logical_cpus   cores / hardware threads this job may use
+#   pow2_upto <n>               1 2 4 ... <= n, plus n itself
 
 set -euo pipefail
 
@@ -63,4 +67,34 @@ append_csv() {
     fi
 }
 
+# Physical cores (distinct socket:core pairs) and hardware threads in our
+# affinity mask. Slurm decides these from --cpus-per-task / --hint.
+phys_cores() {
+    python3 -c '
+import os
+if not hasattr(os, "sched_getaffinity"):  # not Linux (local dry runs)
+    print(os.cpu_count()); raise SystemExit
+cpus = os.sched_getaffinity(0)
+def rd(c, f): return open(f"/sys/devices/system/cpu/cpu{c}/topology/{f}").read().strip()
+print(len({(rd(c, "physical_package_id"), rd(c, "core_id")) for c in cpus}))'
+}
+logical_cpus() { python3 -c 'import os; print(len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count())'; }
+
+pow2_upto() {
+    local n="$1" p=1 out=""
+    while [ "$p" -lt "$n" ]; do out="$out $p"; p=$((p * 2)); done
+    echo "$out $n"
+}
+
+# run_sampled <freq.csv> <label> <out.csv> <cmd...>
+run_sampled() {
+    local freq="$1" label="$2" out="$3"; shift 3
+    python3 slurm/cpu_sampler.py --out "$freq" --label "$label" &
+    local spid=$!
+    append_csv "$out" "$@"
+    kill -TERM "$spid" 2>/dev/null || true
+    wait "$spid" 2>/dev/null || true
+}
+
 record_env
+echo "cores=$(phys_cores) hw_threads=$(logical_cpus)" | tee -a "results/logs/${JOBTAG}.env"
