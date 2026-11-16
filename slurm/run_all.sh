@@ -3,6 +3,8 @@
 #
 #     bash slurm/run_all.sh            phases 3-7 (smoke test first)
 #     bash slurm/run_all.sh --all      also phases 0-2 (probe, serial, OpenMP)
+#     bash slurm/run_all.sh mpi_2node first_match gpu_ada ...
+#                                      only these jobs, no smoke dependency
 #
 # Every experiment depends on the smoke test (afterok): if smoke fails, the
 # rest are cancelled automatically instead of running broken code. The QOS
@@ -14,8 +16,26 @@ cd "$(dirname "$0")/.."
 mkdir -p results/logs
 log="results/logs/run_all_$(date +%Y%m%d_%H%M%S).txt"
 
-sub() { local name="$1"; shift; local id; id=$(sbatch --parsable "$@"); \
-        printf "%-16s %s\n" "$name" "$id" | tee -a "$log"; echo "$id" > /dev/null; }
+# A rejected submission (e.g. a per-user job limit) is reported, not fatal.
+sub() { local name="$1"; shift; local id
+        if id=$(sbatch --parsable "$@" 2>&1); then
+            printf "%-16s %s\n" "$name" "$id" | tee -a "$log"
+        else
+            printf "%-16s NOT SUBMITTED: %s\n" "$name" "$id" | tee -a "$log"
+        fi; }
+gpu_args() { case "$1" in
+        gpu_ada) echo "--gres=gpu:rtx6000ada:1 slurm/gpu.sbatch" ;;
+        gpu_blackwell) echo "--gres=gpu:rtx6000bb:1 slurm/gpu.sbatch" ;;
+        *) echo "slurm/$1.sbatch" ;; esac; }
+
+if [ $# -gt 0 ] && [ "$1" != "--all" ]; then
+    for s in "$@"; do
+        # shellcheck disable=SC2046
+        sub "$s" $(gpu_args "$s")
+    done
+    echo "submitted; ids in $log"
+    exit 0
+fi
 
 if [ "${1:-}" = "--all" ]; then
     sub probe slurm/probe.sbatch

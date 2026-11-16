@@ -101,6 +101,17 @@ run_sampled() {
 # MPI launcher. OpenMPI 4.1.5 (EESSI) is started by Slurm through PMIx.
 SRUN="${SRUN:-srun --mpi=pmix}"
 
+# Transport. The default (UCX + shared memory) segfaults on haskell with 8+
+# ranks per node (job 31232/31233: shared-memory backing file open() ENOENT,
+# then a UCX crash). Use the plain ob1/TCP path instead. Our only messages are
+# one MPI_Reduce per run (and one small Allreduce per first_match round), so
+# transport speed does not affect the results; comm_s still measures it.
+# MPI_TRANSPORT=default restores Open MPI's own choice.
+if [ "${MPI_TRANSPORT:-tcp}" = tcp ]; then
+    export OMPI_MCA_pml=ob1 OMPI_MCA_btl=self,tcp OMPI_MCA_osc=pt2pt
+    export OMPI_MCA_btl_tcp_if_exclude=lo,docker0
+fi
+
 targets() { grep -v '^#' "data/targets/$1.txt"; }
 
 record_env
