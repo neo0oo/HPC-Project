@@ -70,7 +70,7 @@ echo "== 1. block size"
 out=$(csv_for gpu_block)
 for rep in $(seq 1 "$REPS"); do
     for b in 64 128 256 512 1024; do
-        CUDA_BLOCK=$b append_csv "$out" "$CU" -n "$N" -t romeo -c 2^16 -s "$rep"
+        CUDA_BLOCK=$b append_csv_col "$out" block "$b" "$CU" -n "$N" -t romeo -c 2^16 -s "$rep"
     done
 done
 

@@ -69,6 +69,17 @@ append_csv() {
     fi
 }
 
+# append_csv_col <csv> <column> <value> <command...>: like append_csv, plus one
+# extra trailing column (e.g. a setting passed by environment variable).
+append_csv_col() {
+    local out="$1" col="$2" val="$3"; shift 3
+    if [ -s "$out" ]; then
+        "$@" | sed "s/\$/,$val/" >> "$out"
+    else
+        "$@" -H | sed "1s/\$/,$col/; 2,\$s/\$/,$val/" >> "$out"
+    fi
+}
+
 # Physical cores (distinct socket:core pairs) and hardware threads in our
 # affinity mask. Slurm decides these from --cpus-per-task / --hint.
 phys_cores() {

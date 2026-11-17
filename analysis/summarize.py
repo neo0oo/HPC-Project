@@ -43,7 +43,7 @@ def runs_of(rows: list[dict]) -> list[dict]:
     for r in rows:
         key = tuple(r.get(k) for k in ("version", "kernel", "ranks", "threads", "n",
                                        "chunk", "seed", "time_s", "host", "layout",
-                                       "schedule", "flags"))
+                                       "schedule", "flags", "block"))
         if key in seen:
             seen[key]["ntargets"] += 1
         else:
@@ -344,12 +344,14 @@ def sec_profile() -> None:
 
 def sec_gpu() -> None:
     found = False
-    for exp, key, label in (("gpu_block", None, "threads per block"),
+    for exp, key, label in (("gpu_block", None, "block size"),
                             ("gpu_chunk", "chunk", "chunk"),
                             ("gpu_targets", "ntargets", "targets"),
                             ("gpu_headline", None, "headline"),
                             ("gpu_openacc", "version", "OpenACC vs OpenMP")):
         runs = runs_of(rows_of(exp))
+        if exp == "gpu_block" and any(r.get("block") for r in runs):
+            runs = [r for r in runs if r.get("block")]  # older runs lack it
         if not runs:
             continue
         if not found:
@@ -359,13 +361,18 @@ def sec_gpu() -> None:
         by = defaultdict(list)
         for r in runs:
             if exp == "gpu_block":
-                k = (r["host"], r["threads"])
+                k = (r["host"], r.get("block") or r["threads"])
             elif exp == "gpu_headline":
                 k = (r["host"], r["n"])
             else:
                 k = (r["host"], r[key])
             by[k].append(r)
-        for k, rs in sorted(by.items(), key=lambda kv: (kv[0][0], float(kv[0][1]) if kv[0][1].replace('.', '').isdigit() else 0)):
+        def order(kv):
+            try:
+                return (kv[0][0], 0, float(kv[0][1]), "")
+            except (TypeError, ValueError):
+                return (kv[0][0], 1, 0.0, str(kv[0][1]))
+        for k, rs in sorted(by.items(), key=order):
             print(f"   {k[0]:>8} {label} {k[1]:>14}: {med(f(r,'chars_per_s') for r in rs):.3e} chars/s "
                   f"({len(rs)} runs, t={med(f(r,'time_s') for r in rs):.3f} s)")
         if exp == "gpu_headline":
