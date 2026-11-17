@@ -56,7 +56,11 @@ find_nvcc || { echo "FAILED: no nvcc"; exit 2; }
 echo "nvcc: $(command -v nvcc)"; nvcc --version | tail -2
 nvidia-smi --query-gpu=name,memory.total,compute_cap,driver_version,clocks.max.sm \
     --format=csv | tee -a "results/logs/${JOBTAG}.env"
-make -s BIN="$BIN" cuda
+# Compile only for this GPU (job 31621: CUDA 12.4 on haskell rejects
+# compute_120, the Blackwell target in the default two-arch build).
+cc=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -1 | tr -d ' .')
+make -s BIN="$BIN" cuda \
+    NVCCFLAGS="-O3 -std=c++17 -gencode arch=compute_${cc},code=sm_${cc}"
 CU="$BIN/monkey_cuda"
 REPS="${REPS:-3}"
 N="${N:-1e12}"
