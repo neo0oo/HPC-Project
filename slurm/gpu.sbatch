@@ -28,7 +28,32 @@
 #SBATCH --output=results/logs/%x_%j.out
 
 source slurm/common.sh
-module load hpc-course-cuda/12.8.1
+
+# Find nvcc. Job 31342/31343: `module load hpc-course-cuda/12.8.1` succeeded
+# but nvcc was not on PATH. Try the module, then the usual install dirs, then
+# the CUDA bundled with nvhpc. Print what we found (or why not) for the log.
+find_nvcc() {
+    module load hpc-course-cuda/12.8.1 2>&1 || true
+    command -v nvcc >/dev/null 2>&1 && return 0
+    local d
+    for d in "${CUDA_HOME:-}" "${CUDA_PATH:-}" "${CUDA_ROOT:-}" \
+             /usr/local/cuda-12.8 /usr/local/cuda /opt/cuda /usr/lib/cuda; do
+        if [ -n "$d" ] && [ -x "$d/bin/nvcc" ]; then
+            export PATH="$d/bin:$PATH"; return 0
+        fi
+    done
+    module load nvhpc/25.7 2>&1 || true
+    command -v nvcc >/dev/null 2>&1 && return 0
+    d=$(ls -d "${NVHPC_ROOT:-/nonexistent}"/cuda/*/bin 2>/dev/null | sort -V | tail -1)
+    if [ -n "$d" ] && [ -x "$d/nvcc" ]; then export PATH="$d:$PATH"; return 0; fi
+    echo "--- nvcc not found; diagnostics"
+    module -t list 2>&1
+    module show hpc-course-cuda/12.8.1 2>&1 | grep -iE "path|cuda" | head -20
+    ls -d /usr/local/cuda* /opt/nvidia/hpc_sdk 2>&1 | head
+    return 1
+}
+find_nvcc || { echo "FAILED: no nvcc"; exit 2; }
+echo "nvcc: $(command -v nvcc)"; nvcc --version | tail -2
 nvidia-smi --query-gpu=name,memory.total,compute_cap,driver_version,clocks.max.sm \
     --format=csv | tee -a "results/logs/${JOBTAG}.env"
 make -s BIN="$BIN" cuda

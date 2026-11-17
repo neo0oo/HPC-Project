@@ -207,12 +207,21 @@ def sec_first_match() -> None:
         by = defaultdict(list)
         for r in cap:
             by[int(r["ranks"]) * int(r["threads"])].append(r)
-        t1 = med(f(r, "time_s") for r in by.get(1, []))
-        print(f"{'cores':>6} {'median t_s':>10} {'speedup':>8} {'eff':>6} {'wasted':>7}")
+        # Waiting times vary ~geometrically between seeds, so pair runs by
+        # seed: speedup = median over seeds of t1(seed)/tp(seed), and also the
+        # total-time ratio (sum t1 / sum tp over the common seeds).
+        one = {r["seed"]: f(r, "time_s") for r in by.get(1, [])}
+        print(f"{'cores':>6} {'median t_s':>10} {'speedup':>8} {'eff':>6} "
+              f"{'sum-speedup':>11} {'wasted':>7}")
         for c in sorted(by):
-            tp = med(f(r, "time_s") for r in by[c])
-            print(f"{c:>6} {tp:>10.3f} {t1/tp:>8.2f} {t1/tp/c:>6.3f} "
-                  f"{med(f(r,'wasted_frac') for r in by[c]):>7.4f}")
+            tp = {r["seed"]: f(r, "time_s") for r in by[c]}
+            common = [k for k in tp if k in one]
+            if not common:
+                continue
+            sp = med(one[k] / tp[k] for k in common)
+            tot = sum(one[k] for k in common) / sum(tp[k] for k in common)
+            print(f"{c:>6} {med(tp.values()):>10.3f} {sp:>8.2f} {sp/c:>6.3f} "
+                  f"{tot:>11.2f} {med(f(r,'wasted_frac') for r in by[c]):>7.4f}")
     wf = [r for r in rows if r["target"] == "wherefore"]
     if wf:
         print("\nC. 'wherefore' on 32 cores")
