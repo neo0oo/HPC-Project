@@ -1,0 +1,8 @@
+cores=4 hw_threads=8
+nvcc: /usr/local/cuda/bin/nvcc
+Cuda compilation tools, release 12.4, V12.4.99
+Build cuda_12.4.r12.4/compiler.33961263_0
+name, memory.total [MiB], compute_cap, driver_version, clocks.max.sm [MHz]
+NVIDIA RTX 6000 Ada Generation, 49140 MiB, 8.9, 580.126.09, 3105 MHz
+nvcc fatal   : Unsupported gpu architecture 'compute_120'
+make: *** [Makefile:69: build/31621/monkey_cuda] Error 1

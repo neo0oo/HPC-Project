@@ -6,6 +6,8 @@ Every extra character in a target is 27× rarer, so every 27× speedup buys one 
 
 The full plan is in [docs/PLAN.md](docs/PLAN.md), and the commands for every result are in [REPRODUCE.md](REPRODUCE.md).
 
+**Results:** every measured number, with job IDs and explanations, is in [docs/FINDINGS.md](docs/FINDINGS.md). All tables are in [results/summary.txt](results/summary.txt), figures in [results/figures/](results/figures/), raw CSVs in `results/raw/` and job logs in `results/logs/`.
+
 ## Quick start
 
 ```bash
@@ -34,6 +36,7 @@ env/        modules.sh (toolchain), cluster/ (probe output per node type)
 slurm/      one .sbatch per experiment, common.sh, run_all.sh
 data/       targets/*.txt
 results/    raw/<experiment>/<job-id>.csv, logs/ (job output + provenance .env)
-analysis/   theory.py, check_theory.py, check_repro.py, plotting
+analysis/   theory.py, check_theory.py, check_repro.py, check_first.py,
+            summarize.py (all tables), figures.py (report figures)
 docs/       PLAN.md, report, EuroHPC plan, slides
 ```

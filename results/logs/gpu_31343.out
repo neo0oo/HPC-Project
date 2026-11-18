@@ -1,0 +1,5 @@
+cores=4 hw_threads=8
+name, memory.total [MiB], compute_cap, driver_version, clocks.max.sm [MHz]
+NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, 12.0, 580.126.09, 2430 MHz
+make: nvcc: No such file or directory
+make: *** [Makefile:69: build/31343/monkey_cuda] Error 127

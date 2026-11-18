@@ -1,0 +1,21 @@
+cores=32 hw_threads=64
+== MPI weak scaling n/rank=1e10 reps=3
+rep 1 ranks 1
+rep 1 ranks 2
+rep 1 ranks 4
+rep 1 ranks 8
+rep 1 ranks 16
+rep 1 ranks 32
+rep 2 ranks 1
+rep 2 ranks 2
+rep 2 ranks 4
+rep 2 ranks 8
+rep 2 ranks 16
+rep 2 ranks 32
+rep 3 ranks 1
+rep 3 ranks 2
+rep 3 ranks 4
+rep 3 ranks 8
+rep 3 ranks 16
+rep 3 ranks 32
+done: job 31231

@@ -1,0 +1,6 @@
+mpi_2node        31338
+hybrid           31339
+first_match_k    31340
+first_match      31341
+gpu_ada          31342
+gpu_blackwell    31343

@@ -86,6 +86,7 @@ Summary of everything (any time; sections without data are skipped):
 ```bash
 python3 analysis/summarize.py > results/summary.txt
 module load matplotlib/3.7.2-gfbf-2023a && python3 analysis/summarize.py --plots results/figures
+python3 analysis/figures.py          # the other report figures (needs matplotlib)
 ```
 
 Local testing without MPI or GPUs: `make LOCAL_MPI_STUB=1 test` (single-rank MPI stand-in, see `src/mpi_stub/`).

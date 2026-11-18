@@ -1,0 +1,2 @@
+gpu_ada          32118
+gpu_blackwell    32119

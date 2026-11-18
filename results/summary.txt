@@ -1,0 +1,226 @@
+
+==============================================================================
+STRONG / WEAK SCALING (speedup vs the 1-worker run of the same job)
+==============================================================================
+
+OpenMP strong (threads)   (T1 = 165.71 s, median of 3)
+ workers    time_s  speedup    eff  imbal    comm_s    chars/s reps
+       1   165.713     1.00  1.000  1.000  0.00e+00  7.241e+08 3
+       2    82.783     2.00  1.001  1.000  0.00e+00  1.450e+09 3
+       4    41.475     4.00  0.999  1.000  0.00e+00  2.893e+09 3
+       8    20.798     7.97  0.996  1.001  0.00e+00  5.770e+09 3
+      16    10.424    15.90  0.994  1.002  0.00e+00  1.151e+10 3
+      32     5.206    31.83  0.995  1.004  0.00e+00  2.305e+10 3
+      64     4.553    36.40  0.569  1.009  0.00e+00  2.636e+10 3
+
+MPI strong (ranks, 1 node)   (T1 = 166.62 s, median of 3)
+ workers    time_s  speedup    eff  imbal    comm_s    chars/s reps
+       1   166.618     1.00  1.000  1.000  6.40e-05  7.202e+08 3
+       2    83.276     2.00  1.000  1.003  8.30e-05  1.441e+09 3
+       4    41.644     4.00  1.000  1.004  9.20e-05  2.882e+09 3
+       8    20.826     8.00  1.000  1.004  9.80e-05  5.762e+09 3
+      16    10.423    15.99  0.999  1.005  9.80e-05  1.151e+10 3
+      32     5.233    31.84  0.995  1.006  5.80e-05  2.293e+10 3
+
+OpenMP weak, close binding   (T1 = 13.84 s, median of 3)
+ workers    time_s  speedup    eff  imbal    comm_s    chars/s reps
+       1    13.838     1.00  1.000  1.000  0.00e+00  7.226e+08 3
+       2    13.845     2.00  0.999  1.000  0.00e+00  1.445e+09 3
+       4    13.842     4.00  1.000  1.000  0.00e+00  2.890e+09 3
+       8    13.848     7.99  0.999  1.001  0.00e+00  5.777e+09 3
+      16    13.866    15.97  0.998  1.001  0.00e+00  1.154e+10 3
+      32    13.875    31.91  0.997  1.002  0.00e+00  2.306e+10 3
+
+OpenMP weak, spread binding   (T1 = 13.84 s, median of 3)
+ workers    time_s  speedup    eff  imbal    comm_s    chars/s reps
+       1    13.839     1.00  1.000  1.000  0.00e+00  7.226e+08 3
+       2    13.827     2.00  1.001  1.001  0.00e+00  1.446e+09 3
+       4    13.837     4.00  1.000  1.001  0.00e+00  2.891e+09 3
+       8    13.843     8.00  1.000  1.002  0.00e+00  5.779e+09 3
+      16    13.845    15.99  1.000  1.001  0.00e+00  1.156e+10 3
+      32    13.879    31.91  0.997  1.002  0.00e+00  2.306e+10 3
+
+MPI weak (1 node)   (T1 = 13.88 s, median of 3)
+ workers    time_s  speedup    eff  imbal    comm_s    chars/s reps
+       1    13.877     1.00  1.000  1.000  4.50e-05  7.206e+08 3
+       2    13.878     2.00  1.000  1.003  7.00e-05  1.441e+09 3
+       4    13.880     4.00  1.000  1.004  8.10e-05  2.882e+09 3
+       8    13.884     8.00  1.000  1.004  8.30e-05  5.762e+09 3
+      16    13.893    15.98  0.999  1.005  9.00e-05  1.152e+10 3
+      32    13.917    31.91  0.997  1.004  2.25e-04  2.299e+10 3
+
+==============================================================================
+ONE NODE vs TWO NODES (MPI, same work)
+==============================================================================
+        layout    time_s     comm_s    chars/s reps
+      16x1node    10.440   2.15e-04  1.149e+10 3
+    8+8_2nodes    10.443   1.86e-03  1.149e+10 3
+  16+16_2nodes     5.241   1.25e-04  2.290e+10 3
+
+==============================================================================
+HYBRID: ranks x threads on 2 nodes x 16 cores
+==============================================================================
+ ranks x thr    time_s  imbal     comm_s    chars/s reps
+      32 x 1     5.224  1.011   1.06e-04  2.297e+10 3
+      16 x 2     5.224  1.011   1.49e-03  2.297e+10 3
+       8 x 4     5.223  1.009   1.33e-03  2.297e+10 3
+       4 x 8     5.216  1.008   1.99e-03  2.301e+10 3
+      2 x 16     5.206  1.004   6.40e-04  2.305e+10 3
+
+==============================================================================
+TIME TO SOLUTION (first_match)
+==============================================================================
+A. waiting time vs Conway's expectation (32 cores)
+    target  L runs   mean wait    Conway E  mean/E sd/mean median t_s
+     romeo  5   30   1.436e+07   1.435e+07   1.001   0.729      0.020
+    juliet  6   30   3.493e+08   3.874e+08   0.901   0.840      0.020
+   capulet  7   50   9.349e+09   1.046e+10   0.894   1.050      0.266
+  montague  8   30   2.698e+11   2.824e+11   0.955   1.089      6.079
+ wherefore  9    5   6.953e+12   7.626e+12   0.912   0.604    213.380
+   (waiting time ~ geometric: expect mean/E ~ 1 within ~2/sqrt(runs), sd/mean ~ 1)
+
+B. capulet time-to-solution vs cores (same 20 seeds per point)
+ cores median t_s  speedup    eff sum-speedup  wasted
+     1      5.028     1.00  1.000        1.00  0.0013
+     2      3.275     1.55  0.773        1.57  0.0021
+     4      1.273     3.93  0.983        3.94  0.0069
+     8      0.854     5.90  0.737        6.03  0.0110
+    16      0.333    15.28  0.955       15.25  0.0169
+    32      0.231    22.40  0.700       22.70  0.0288
+
+C. 'wherefore' on 32 cores
+   seed 1: found after 2.824e+12 chars in 102.0 s (2.768e+10 chars/s)
+   seed 2: found after 6.241e+12 chars in 224.2 s (2.784e+10 chars/s)
+   seed 3: found after 5.911e+12 chars in 213.4 s (2.771e+10 chars/s)
+   seed 4: found after 5.727e+12 chars in 206.0 s (2.781e+10 chars/s)
+   seed 5: found after 1.406e+13 chars in 506.1 s (2.778e+10 chars/s)
+
+D. stop-check interval K, sync vs async (montague, 2 x 16 cores)
+    K   mode median t_s    comm_s   wasted   rounds    chars/s
+    1  async      4.129    0.0957   0.0003     4537  3.666e+10
+    1   sync      5.402    1.3500   0.0001     4536  2.818e+10
+    4  async      4.068    0.0421   0.0015     1136  3.722e+10
+    4   sync      4.401    0.3779   0.0006     1134  3.450e+10
+   16  async      4.034    0.0071   0.0063      285  3.788e+10
+   16   sync      4.136    0.1027   0.0027      284  3.691e+10
+   64  async      4.061    0.0008   0.0172       72  3.805e+10
+   64   sync      4.039    0.0312   0.0031       71  3.777e+10
+  256  async      4.262    0.0003   0.0769       19  3.830e+10
+  256   sync      4.053    0.0121   0.0285       18  3.817e+10
+
+==============================================================================
+OPTIMIZATION: chunked (baseline) vs fused kernel
+==============================================================================
+A. single core
+ targets  chunked chars/s  fused chars/s  speedup
+       1        7.243e+08      9.458e+08     1.31
+       2        4.654e+08      7.273e+08     1.56
+       4        2.712e+08      6.389e+08     2.36
+       8        1.475e+08      6.318e+08     4.28
+      16        7.726e+07      6.185e+08     8.01
+  mixed8        1.479e+08      1.775e+08     1.20
+
+B. whole allocation (OpenMP)
+    chunked  1 targets  32 threads: 2.309e+10 chars/s
+    chunked 16 targets  32 threads: 2.463e+09 chars/s
+      fused  1 targets  32 threads: 2.996e+10 chars/s
+      fused 16 targets  32 threads: 1.948e+10 chars/s
+
+C. compiler flags (single core, 1 target)
+                                -O2  chunked: 7.258e+08 chars/s
+                                -O2    fused: 8.729e+08 chars/s
+                                -O3  chunked: 7.226e+08 chars/s
+                                -O3    fused: 9.432e+08 chars/s
+                  -O3_-march=znver4  chunked: 6.353e+08 chars/s
+                  -O3_-march=znver4    fused: 7.556e+08 chars/s
+   -O3_-march=znver4_-funroll-loops  chunked: 7.253e+08 chars/s
+   -O3_-march=znver4_-funroll-loops    fused: 9.408e+08 chars/s
+
+==============================================================================
+SENSITIVITY: chunk size x OpenMP schedule (fused, all cores)
+==============================================================================
+   chunk  dynamic_1 t_s  imbal     guided t_s  imbal     static t_s  imbal
+    2^12          5.695  1.000          5.526  1.001          5.562  1.016
+    2^14          5.563  1.000          5.517  1.000          5.562  1.017
+    2^16          5.527  1.000          5.517  1.000          5.558  1.016
+    2^18          5.517  1.000          5.517  1.001          5.564  1.017
+    2^20          5.516  1.000          5.517  1.001          5.557  1.016
+    2^22          5.518  1.001          5.521  1.002          5.566  1.018
+    2^24          5.521  1.003          5.524  1.004          5.570  1.022
+    2^26          5.565  1.018          5.565  1.018          5.567  1.051
+    2^28          5.564  1.074          5.566  1.074          5.569  1.089
+    2^30          6.294  1.329          6.310  1.335          6.358  1.471
+    2^32          6.329   idle          6.330   idle          6.360   idle
+
+==============================================================================
+PROFILE (single core)
+==============================================================================
+
+timing: generation only = 0.607 ns/char
+  kernel  nt  ns/char  match ns  ins/char  cyc/char    IPC  brmsp/kc L1miss/kc
+ chunked   1    1.376     0.770         -         -         -         -         -
+ chunked   4    3.682     3.075         -         -         -         -         -
+ chunked  16   12.909    12.303         -         -         -         -         -
+   fused   1    1.047     0.441         -         -         -         -         -
+   fused   4    1.708     1.102         -         -         -         -         -
+   fused  16    1.748     1.142         -         -         -         -         -
+     gen   0    0.607     0.000         -         -         -         -         -
+
+==============================================================================
+GPU (CUDA) and OpenACC
+==============================================================================
+
+gpu_block
+    fortran block size             64: 1.133e+12 chars/s (3 runs, t=0.883 s)
+    fortran block size            128: 1.132e+12 chars/s (3 runs, t=0.883 s)
+    fortran block size            256: 1.151e+12 chars/s (3 runs, t=0.869 s)
+    fortran block size            512: 1.174e+12 chars/s (3 runs, t=0.851 s)
+    fortran block size           1024: 1.138e+12 chars/s (3 runs, t=0.879 s)
+    haskell block size             64: 8.543e+11 chars/s (3 runs, t=1.171 s)
+    haskell block size            128: 8.558e+11 chars/s (3 runs, t=1.169 s)
+    haskell block size            256: 8.617e+11 chars/s (3 runs, t=1.160 s)
+    haskell block size            512: 8.755e+11 chars/s (3 runs, t=1.142 s)
+    haskell block size           1024: 8.699e+11 chars/s (3 runs, t=1.149 s)
+
+gpu_chunk
+    fortran chunk           1024: 1.148e+12 chars/s (6 runs, t=0.871 s)
+    fortran chunk           4096: 1.152e+12 chars/s (6 runs, t=0.868 s)
+    fortran chunk          16384: 1.153e+12 chars/s (6 runs, t=0.868 s)
+    fortran chunk          65536: 1.152e+12 chars/s (6 runs, t=0.868 s)
+    fortran chunk         262144: 1.146e+12 chars/s (6 runs, t=0.872 s)
+    fortran chunk        1048576: 1.144e+12 chars/s (6 runs, t=0.874 s)
+    fortran chunk        4194304: 1.137e+12 chars/s (6 runs, t=0.879 s)
+    haskell chunk           1024: 8.509e+11 chars/s (3 runs, t=1.175 s)
+    haskell chunk           4096: 8.558e+11 chars/s (3 runs, t=1.168 s)
+    haskell chunk          16384: 8.544e+11 chars/s (3 runs, t=1.170 s)
+    haskell chunk          65536: 8.526e+11 chars/s (3 runs, t=1.173 s)
+    haskell chunk         262144: 8.537e+11 chars/s (3 runs, t=1.171 s)
+    haskell chunk        1048576: 8.373e+11 chars/s (3 runs, t=1.194 s)
+    haskell chunk        4194304: 6.607e+11 chars/s (3 runs, t=1.514 s)
+
+gpu_targets
+    fortran targets              1: 1.153e+12 chars/s (6 runs, t=0.867 s)
+    fortran targets              4: 7.016e+11 chars/s (6 runs, t=1.425 s)
+    fortran targets             16: 2.824e+11 chars/s (6 runs, t=3.542 s)
+    haskell targets              1: 8.517e+11 chars/s (3 runs, t=1.174 s)
+    haskell targets              4: 5.254e+11 chars/s (3 runs, t=1.903 s)
+    haskell targets             16: 2.024e+11 chars/s (3 runs, t=4.940 s)
+
+gpu_headline
+    fortran headline 345600000000000: 9.230e+11 chars/s (1 runs, t=374.447 s)
+    fortran headline 346000000000000: 9.265e+11 chars/s (1 runs, t=373.464 s)
+    haskell headline 255300000000000: 6.989e+11 chars/s (1 runs, t=365.284 s)
+   fortran: 'wherefore' x50 in 3.460e+14 chars (expected 45.37)
+   fortran: 'friar john' x2 in 3.460e+14 chars (expected 1.68)
+   fortran: 'wherefore' x50 in 3.456e+14 chars (expected 45.32)
+   fortran: 'friar john' x2 in 3.456e+14 chars (expected 1.68)
+   haskell: 'wherefore' x37 in 2.553e+14 chars (expected 33.48)
+   haskell: 'friar john' x1 in 2.553e+14 chars (expected 1.24)
+
+gpu_openacc
+    fortran OpenACC vs OpenMP        acc_gpu: 7.017e+11 chars/s (6 runs, t=1.425 s)
+    fortran OpenACC vs OpenMP  acc_multicore: 4.679e+09 chars/s (6 runs, t=8.550 s)
+    fortran OpenACC vs OpenMP            omp: 2.940e+09 chars/s (6 runs, t=13.603 s)
+    haskell OpenACC vs OpenMP        acc_gpu: 5.457e+11 chars/s (3 runs, t=1.832 s)
+    haskell OpenACC vs OpenMP  acc_multicore: 4.902e+09 chars/s (3 runs, t=8.160 s)
+    haskell OpenACC vs OpenMP            omp: 2.961e+09 chars/s (3 runs, t=13.511 s)

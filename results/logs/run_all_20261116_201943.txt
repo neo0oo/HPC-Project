@@ -1,0 +1,8 @@
+smoke            31229
+mpi_strong       31230
+mpi_weak         31231
+mpi_2node        31232
+hybrid           31233
+optimize         31234
+sensitivity      31235
+profile          31236
