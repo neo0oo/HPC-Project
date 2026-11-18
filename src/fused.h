@@ -146,24 +146,72 @@ static inline uint64_t fused_first(rng_t *r, uint64_t n,
 }
 
 /* Type n characters from r and add matches into counts (CPU, with bitmap). */
-static inline void fused_scan(rng_t *r, uint64_t n, const fused_targets_t *f,
-                              uint64_t *counts)
+#define FUSED_SIMPLE_MAX 3 /* <= this many targets: plain compare loop */
+
+/* Few targets: one branchless compare per target, no group/bitmap logic.
+ * Measured faster than the grouped path up to 3 targets (1.25-2x on M3). */
+static inline void fused_scan_simple(rng_t *r, uint64_t n,
+                                     const fused_targets_t *f, uint64_t *counts)
 {
+    rng_t lr = *r;
+    const int nt = f->n;
+    uint64_t c[FUSED_SIMPLE_MAX] = {0}, mk[FUSED_SIMPLE_MAX], cd[FUSED_SIMPLE_MAX];
+    for (int k = 0; k < nt; k++) {
+        mk[k] = f->mask[k];
+        cd[k] = f->code[k];
+    }
     uint64_t w = ~0ULL, i = 0;
     for (; i + 2 <= n; i += 2) {
-        uint64_t x = rng_next(r);
-        uint64_t c0 = monkey_draw((uint32_t)x, r);
-        uint64_t c1 = monkey_draw((uint32_t)(x >> 32), r);
+        uint64_t x = rng_next(&lr);
+        uint64_t c0 = monkey_draw((uint32_t)x, &lr);
+        uint64_t c1 = monkey_draw((uint32_t)(x >> 32), &lr);
         uint64_t w0 = (w << 5) | c0;
         uint64_t w1 = (w << 10) | (c0 << 5) | c1;
-        fused_match(f, w0, counts);
-        fused_match(f, w1, counts);
+        for (int k = 0; k < nt; k++)
+            c[k] += ((w0 & mk[k]) == cd[k]) + ((w1 & mk[k]) == cd[k]);
         w = w1;
     }
     if (i < n) {
-        w = (w << 5) | monkey_draw((uint32_t)rng_next(r), r);
-        fused_match(f, w, counts);
+        w = (w << 5) | monkey_draw((uint32_t)rng_next(&lr), &lr);
+        for (int k = 0; k < nt; k++)
+            c[k] += ((w & mk[k]) == cd[k]);
     }
+    for (int k = 0; k < nt; k++)
+        counts[k] += c[k];
+    *r = lr;
+}
+
+static inline void fused_scan(rng_t *r, uint64_t n, const fused_targets_t *f,
+                              uint64_t *counts)
+{
+    if (f->n <= FUSED_SIMPLE_MAX) {
+        fused_scan_simple(r, n, f, counts);
+        return;
+    }
+    /* Work on local copies of the generator state and the counters, written
+     * back once at the end. Through pointers, every counts[k] += ... may alias
+     * the uint64_t RNG state as far as the compiler knows, which forces a
+     * store/reload of the state on every character (measured: ~1 ns/char). */
+    rng_t lr = *r;
+    uint64_t c[MONKEY_MAX_TARGETS] = {0};
+    uint64_t w = ~0ULL, i = 0;
+    for (; i + 2 <= n; i += 2) {
+        uint64_t x = rng_next(&lr);
+        uint64_t c0 = monkey_draw((uint32_t)x, &lr);
+        uint64_t c1 = monkey_draw((uint32_t)(x >> 32), &lr);
+        uint64_t w0 = (w << 5) | c0;
+        uint64_t w1 = (w << 10) | (c0 << 5) | c1;
+        fused_match(f, w0, c);
+        fused_match(f, w1, c);
+        w = w1;
+    }
+    if (i < n) {
+        w = (w << 5) | monkey_draw((uint32_t)rng_next(&lr), &lr);
+        fused_match(f, w, c);
+    }
+    for (int k = 0; k < f->n; k++)
+        counts[k] += c[k];
+    *r = lr;
 }
 
 /*
