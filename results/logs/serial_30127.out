@@ -1,0 +1,40 @@
+== baseline_length (n=4e9, reps=5)
+== baseline_ntargets (n=1e9, reps=5)
+== baseline_kernel (n=4e9, reps=5)
+== correctness
+serial kernel=chunked n=2e+08
+seed   target        count         expected        z  status
+   1        a      7403560      7407407.407   -1.414  ok
+   1      the        10110        10161.051   -0.506  ok
+   1     love          370          376.335   -0.327  ok
+   1    romeo            7           13.938   -1.858  ok
+   2        a      7406221      7407407.407   -0.436  ok
+   2      the        10219        10161.051    0.575  ok
+   2     love          397          376.335    1.065  ok
+   2    romeo           17           13.938    0.820  ok
+   3        a      7407592      7407407.407    0.068  ok
+   3      the        10050        10161.051   -1.102  ok
+   3     love          380          376.335    0.189  ok
+   3    romeo           17           13.938    0.820  ok
+
+all checks passed
+serial kernel=v0 n=2e+08
+seed   target        count         expected        z  status
+   1        a      7404656      7407407.407   -1.011  ok
+   1      the        10282        10161.053    1.200  ok
+   1     love          369          376.335   -0.378  ok
+   1    romeo           15           13.938    0.284  ok
+   2        a      7409952      7407407.407    0.935  ok
+   2      the        10222        10161.053    0.605  ok
+   2     love          393          376.335    0.859  ok
+   2    romeo           14           13.938    0.017  ok
+   3        a      7407485      7407407.407    0.029  ok
+   3      the        10211        10161.053    0.496  ok
+   3     love          367          376.335   -0.481  ok
+   3    romeo           17           13.938    0.820  ok
+
+all checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+all reproducibility checks passed
+done: job 30127

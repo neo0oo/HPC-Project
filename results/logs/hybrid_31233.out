@@ -1,0 +1,246 @@
+cores=16 hw_threads=32
+== hybrid sweep on 2 nodes x 16 cores, n=1.2e11 reps=3
+rep 1 ranks 32 threads 1
+[haskell:3655698:0:3655698] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+[haskell:3655700:0:3655700] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+==== backtrace (tid:3655700) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x700aad297414]
+==== backtrace (tid:3655698) ====
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x700aad2975e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x700aad29778a]
+=================================
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x779c2a17c414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x779c2a17c5e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x779c2a17c78a]
+=================================
+[haskell:3655700] *** Process received signal ***
+[haskell:3655700] Signal: Segmentation fault (11)
+[haskell:3655700] Signal code:  (-6)
+[haskell:3655700] Failing at address: 0xf43000037c814
+[haskell:3655698] *** Process received signal ***
+[haskell:3655698] Signal: Segmentation fault (11)
+[haskell:3655698] Signal code:  (-6)
+[haskell:3655698] Failing at address: 0xf43000037c812
+[haskell:3655700] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x700aaf8ea560]
+[haskell:3655700] *** End of error message ***
+[haskell:3655698] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x779c2c7cf560]
+[haskell:3655698] *** End of error message ***
+[haskell:3655701:0:3655701] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+[haskell:3655692:0:3655692] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+==== backtrace (tid:3655701) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x7cd0adf3a414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x7cd0adf3a5e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x7cd0adf3a78a]
+=================================
+[haskell:3655701] *** Process received signal ***
+[haskell:3655701] Signal: Segmentation fault (11)
+[haskell:3655701] Signal code:  (-6)
+[haskell:3655701] Failing at address: 0xf43000037c815
+==== backtrace (tid:3655692) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x77b56db95414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x77b56db955e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x77b56db9578a]
+=================================
+[haskell:3655701] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x7cd0b058d560]
+[haskell:3655701] *** End of error message ***
+[haskell:3655692] *** Process received signal ***
+[haskell:3655692] Signal: Segmentation fault (11)
+[haskell:3655692] Signal code:  (-6)
+[haskell:3655692] Failing at address: 0xf43000037c80c
+[haskell:3655692] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x77b5701e9560]
+[haskell:3655692] *** End of error message ***
+[haskell:3655694:0:3655694] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+[haskell:3655693:0:3655693] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+[haskell:3655705:0:3655705] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+==== backtrace (tid:3655694) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x7b46f1372414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x7b46f13725e4]
+==== backtrace (tid:3655693) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x7b2c796a6414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x7b2c796a65e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x7b2c796a678a]
+=================================
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x7b46f137278a]
+=================================
+==== backtrace (tid:3655705) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x7c809dc07414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x7c809dc075e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x7c809dc0778a]
+=================================
+[haskell:3655693] *** Process received signal ***
+[haskell:3655693] Signal: Segmentation fault (11)
+[haskell:3655693] Signal code:  (-6)
+[haskell:3655693] Failing at address: 0xf43000037c80d
+[haskell:3655694] *** Process received signal ***
+[haskell:3655694] Signal: Segmentation fault (11)
+[haskell:3655694] Signal code:  (-6)
+[haskell:3655694] Failing at address: 0xf43000037c80e
+[haskell:3655705] *** Process received signal ***
+[haskell:3655705] Signal: Segmentation fault (11)
+[haskell:3655705] Signal code:  (-6)
+[haskell:3655705] Failing at address: 0xf43000037c819
+[haskell:3655693] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x7b2c7bd00560]
+[haskell:3655693] *** End of error message ***
+[haskell:3655694] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x7b46f39c5560]
+[haskell:3655694] *** End of error message ***
+[haskell:3655705] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x7c80a025a560]
+[haskell:3655705] *** End of error message ***
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during sm BTL initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  System call: open(2)
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+A system call failed during shared memory initialization that should
+not have.  It is likely that your MPI job will now either abort or
+experience performance degradation.
+
+  Local host:  haskell
+  System call: open(2) 
+  Error:       No such file or directory (errno 2)
+--------------------------------------------------------------------------
+srun: error: haskell: tasks 17-19,23,25-26,30: Segmentation fault
+slurmstepd-haskell: error:  mpi/pmix_v5: _errhandler: haskell [1]: pmixp_client_v2.c:211: Error handler invoked: status = -61, source = [slurm.pmix.31233.0:23]
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd-fortran: error: *** STEP 31233.0 ON fortran CANCELLED AT 2026-11-16T20:46:26 ***
+srun: error: haskell: tasks 16,20-22,24,27-29,31: Killed
+srun: error: fortran: tasks 0-15: Killed

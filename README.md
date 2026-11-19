@@ -6,6 +6,8 @@ Every extra character in a target is 27× rarer, so every 27× speedup buys one 
 
 The full plan is in [docs/PLAN.md](docs/PLAN.md), and the commands for every result are in [REPRODUCE.md](REPRODUCE.md).
 
+**Results:** every measured number, with job IDs and explanations, is in [docs/FINDINGS.md](docs/FINDINGS.md). All tables are in [results/summary.txt](results/summary.txt), figures in [results/figures/](results/figures/), raw CSVs in `results/raw/` and job logs in `results/logs/`.
+
 ## Quick start
 
 ```bash
@@ -15,7 +17,9 @@ bin/serial -n 1e9 -t romeo,juliet -H
 python3 analysis/theory.py --rate 3e8 --cores 64 wherefore
 ```
 
-Options (shared by every version): `-n` characters (`1e9`, `2^30`), `-t` comma-separated targets (`_` = space), `-s` seed, `-c` chunk size (default `2^24`), `-k chunked|v0`, `-H` CSV header.
+Programs: `serial`, `omp`, `mpi`, `hybrid` (MPI+OpenMP), `first_match`, `prof`, plus `make cuda` and `make acc`.
+
+Options (shared by every version): `-n` characters (`1e9`, `2^30`), `-t` comma-separated targets (`_` = space), `-s` seed, `-c` chunk size (default `2^24`), `-k chunked|fused|v0` (baseline, optimized, original single stream), `-H` CSV header.
 
 ## How the work is decomposed
 
@@ -24,11 +28,15 @@ The n characters are split into fixed chunks. Chunk i is typed by its own genera
 ## Layout
 
 ```
-src/        monkey.h (kernel + theory), rng.h (xoshiro256**), cli.h (options/CSV), serial.c, ...
+src/        monkey.h (baseline kernel + theory), fused.h (optimized kernel), kernels.h,
+            rng.h (xoshiro256**), cli.h (options/CSV), serial.c, omp.c, mpi.c (mpi + hybrid),
+            first_match.c (time-to-solution), prof.c (profiling), acc.c (OpenACC), mpi_stub/
+cuda/       monkey.cu (CUDA version)
 env/        modules.sh (toolchain), cluster/ (probe output per node type)
 slurm/      one .sbatch per experiment, common.sh, run_all.sh
 data/       targets/*.txt
 results/    raw/<experiment>/<job-id>.csv, logs/ (job output + provenance .env)
-analysis/   theory.py, check_theory.py, check_repro.py, plotting
+analysis/   theory.py, check_theory.py, check_repro.py, check_first.py,
+            summarize.py (all tables), figures.py (report figures)
 docs/       PLAN.md, report, EuroHPC plan, slides
 ```

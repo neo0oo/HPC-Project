@@ -1,0 +1,115 @@
+cores=4 hw_threads=8
+== make test (MPI: 4 ranks on 2 nodes)
+serial kernel=chunked n=2e+08
+seed   target        count         expected        z  status
+   1        a      7403560      7407407.407   -1.414  ok
+   1      the        10110        10161.051   -0.506  ok
+   1     love          370          376.335   -0.327  ok
+   1    romeo            7           13.938   -1.858  ok
+   2        a      7406221      7407407.407   -0.436  ok
+   2      the        10219        10161.051    0.575  ok
+   2     love          397          376.335    1.065  ok
+   2    romeo           17           13.938    0.820  ok
+   3        a      7407592      7407407.407    0.068  ok
+   3      the        10050        10161.051   -1.102  ok
+   3     love          380          376.335    0.189  ok
+   3    romeo           17           13.938    0.820  ok
+
+all checks passed
+serial kernel=v0 n=2e+08
+seed   target        count         expected        z  status
+   1        a      7404656      7407407.407   -1.011  ok
+   1      the        10282        10161.053    1.200  ok
+   1     love          369          376.335   -0.378  ok
+   1    romeo           15           13.938    0.284  ok
+   2        a      7409952      7407407.407    0.935  ok
+   2      the        10222        10161.053    0.605  ok
+   2     love          393          376.335    0.859  ok
+   2    romeo           14           13.938    0.017  ok
+   3        a      7407485      7407407.407    0.029  ok
+   3      the        10211        10161.053    0.496  ok
+   3     love          367          376.335   -0.481  ok
+   3    romeo           17           13.938    0.820  ok
+
+all checks passed
+serial kernel=fused n=2e+08
+seed   target        count         expected        z  status
+   1        a      7403560      7407407.407   -1.414  ok
+   1      the        10110        10161.051   -0.506  ok
+   1     love          370          376.335   -0.327  ok
+   1    romeo            7           13.938   -1.858  ok
+   2        a      7406221      7407407.407   -0.436  ok
+   2      the        10219        10161.051    0.575  ok
+   2     love          397          376.335    1.065  ok
+   2    romeo           17           13.938    0.820  ok
+   3        a      7407592      7407407.407    0.068  ok
+   3      the        10050        10161.051   -1.102  ok
+   3     love          380          376.335    0.189  ok
+   3    romeo           17           13.938    0.820  ok
+
+all checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   serial -k fused == serial (chunk 2^16)
+ok   serial -k fused == serial (chunk 2^20)
+ok   serial -k fused == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   omp  == serial (chunk 2^16)
+ok   omp  == serial (chunk 2^20)
+ok   omp  == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   omp  == serial (chunk 2^16)
+ok   omp  == serial (chunk 2^20)
+ok   omp  == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   omp  == serial (chunk 2^16)
+ok   omp  == serial (chunk 2^20)
+ok   omp  == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   omp -k fused == serial (chunk 2^16)
+ok   omp -k fused == serial (chunk 2^20)
+ok   omp -k fused == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   mpi  == serial (chunk 2^16)
+ok   mpi  == serial (chunk 2^20)
+ok   mpi  == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   hybrid -k fused == serial (chunk 2^16)
+ok   hybrid -k fused == serial (chunk 2^20)
+ok   hybrid -k fused == serial (chunk 1000003)
+all reproducibility checks passed
+ok   seed 1: first_pos identical across configs = [21285473]
+ok   seed 2: first_pos identical across configs = [1757564]
+ok   seed 3: first_pos identical across configs = [39264866]
+ok   mean wait over 40 seeds = 1.337e+07, Conway E = 1.435e+07 (tolerance 9.1e+06)
+all first_match checks passed
+== srun layouts used by the hybrid / first_match jobs
+srun: Job step's --cpus-per-task value exceeds that of job (8 > 4). Job step may never run.
+version,kernel,ranks,threads,n,chunk,seed,target,len,count,expected,time_s,chars_per_s,host,git,busy_min_s,busy_max_s,comm_s
+hybrid,chunked,2,8,2000000000,16777216,1,romeo,5,145,139.3834053,0.330853,6044980628,fortran,40b34f0f15cf,0.281447,0.321711,0.000066
+version,kernel,ranks,threads,seed,target,len,chunk,check,mode,first_pos,expected_wait,chars_typed,wasted_frac,rounds,time_s,comm_s,chars_per_s,host,git
+first_match,chunked,1,4,1,love,4,65536,16,sync,774586,531441,4194304,0.815324,1,0.002770,0.000004,1514136148,fortran,40b34f0f15cf
+== prof (timing breakdown)
+gen,0,200000000,0.122149,0.6107,,,,,,fortran,40b34f0f15cf
+chunked,1,200000000,0.276908,1.3845,,,,,,fortran,40b34f0f15cf
+fused,1,200000000,0.264949,1.3247,,,,,,fortran,40b34f0f15cf
+== PAPI (optional)
+build/31229/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+PAPI not usable (fine: prof timing breakdown is the fallback)
+perf_event_paranoid=4
+SMOKE PASSED: job 31229

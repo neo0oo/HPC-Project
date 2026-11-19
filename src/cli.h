@@ -15,7 +15,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "monkey.h"
+#include "kernels.h"
 
 #ifndef GIT_SHA
 #define GIT_SHA "unknown"
@@ -23,17 +23,18 @@
 
 #define CSV_HEADER                                                         \
     "version,kernel,ranks,threads,n,chunk,seed,target,len,count,expected," \
-    "time_s,chars_per_s,host,git"
-
-enum { KERNEL_CHUNKED = 0, KERNEL_V0 = 1 };
+    "time_s,chars_per_s,host,git,busy_min_s,busy_max_s,comm_s"
 
 typedef struct {
     uint64_t    n;      /* total characters typed                  */
     uint64_t    chunk;  /* characters per chunk (chunked kernel)   */
     uint64_t    seed;   /* run seed                                */
     const char *spec;   /* comma-separated targets                 */
-    int         kernel; /* KERNEL_CHUNKED or KERNEL_V0             */
+    int         kernel; /* KERNEL_CHUNKED, KERNEL_FUSED, KERNEL_V0 */
     int         header; /* print CSV header first                  */
+    /* first_match only */
+    uint64_t    check;  /* chunks per thread between stop checks (-K) */
+    int         async;  /* -m async: overlap the stop check (Iallreduce) */
 } monkey_opts_t;
 
 static inline double now_s(void)
@@ -77,14 +78,18 @@ static inline void monkey_usage(const char *prog)
 {
     fprintf(stderr,
             "usage: %s [-n chars] [-t targets] [-s seed] [-c chunk] "
-            "[-k chunked|v0] [-H]\n"
+            "[-k chunked|fused|v0] [-H]\n"
             "  -n  characters to type (200000000, 2e8 or 2^28), default 1e8\n"
             "  -t  comma-separated targets (a-z, space or _),"
             " default a,the,love,romeo\n"
             "  -s  RNG seed, default 1\n"
             "  -c  characters per chunk, default 2^24\n"
-            "  -k  kernel: chunked (default) or v0 (one stream, serial only)\n"
-            "  -H  print CSV header\n",
+            "  -k  kernel: chunked (default), fused (optimized) or v0 (one stream,"
+            " serial only)\n"
+            "  -H  print CSV header\n"
+            "  first_match only:\n"
+            "  -K  chunks per thread between stop checks, default 16\n"
+            "  -m  sync (blocking check) or async (overlapped), default sync\n",
             prog);
 }
 
@@ -101,9 +106,11 @@ static inline int monkey_parse_opts(int argc, char **argv, monkey_opts_t *o,
     o->spec = "a,the,love,romeo";
     o->kernel = KERNEL_CHUNKED;
     o->header = 0;
+    o->check = 16;
+    o->async = 0;
 
     int opt;
-    while ((opt = getopt(argc, argv, "n:t:s:c:k:Hh")) != -1) {
+    while ((opt = getopt(argc, argv, "n:t:s:c:k:K:m:Hh")) != -1) {
         switch (opt) {
         case 'n':
             if (parse_u64(optarg, &o->n) || o->n == 0) {
@@ -128,12 +135,25 @@ static inline int monkey_parse_opts(int argc, char **argv, monkey_opts_t *o,
             }
             break;
         case 'k':
-            if (strcmp(optarg, "chunked") == 0)
-                o->kernel = KERNEL_CHUNKED;
-            else if (strcmp(optarg, "v0") == 0)
-                o->kernel = KERNEL_V0;
-            else {
+            o->kernel = kernel_parse(optarg);
+            if (o->kernel < 0) {
                 fprintf(stderr, "error: bad -k \"%s\"\n", optarg);
+                return 2;
+            }
+            break;
+        case 'K':
+            if (parse_u64(optarg, &o->check) || o->check == 0) {
+                fprintf(stderr, "error: bad -K \"%s\"\n", optarg);
+                return 2;
+            }
+            break;
+        case 'm':
+            if (strcmp(optarg, "sync") == 0)
+                o->async = 0;
+            else if (strcmp(optarg, "async") == 0)
+                o->async = 1;
+            else {
+                fprintf(stderr, "error: bad -m \"%s\"\n", optarg);
                 return 2;
             }
             break;
@@ -157,11 +177,18 @@ static inline int monkey_parse_opts(int argc, char **argv, monkey_opts_t *o,
     return -1;
 }
 
-/* Print one CSV row per target. */
+/*
+ * Print one CSV row per target. busy_min/busy_max: shortest and longest time
+ * any single worker (thread or rank x thread) spent computing; their ratio
+ * measures load imbalance (serial: both equal elapsed). comm: time spent in
+ * MPI communication (0 without MPI).
+ */
 static inline void monkey_print_csv(const char *version, int ranks,
                                     int threads, const monkey_opts_t *o,
                                     const monkey_targets_t *t,
-                                    const uint64_t *counts, double elapsed)
+                                    const uint64_t *counts, double elapsed,
+                                    double busy_min, double busy_max,
+                                    double comm)
 {
     char host[256] = "unknown";
     gethostname(host, sizeof host - 1);
@@ -175,10 +202,11 @@ static inline void monkey_print_csv(const char *version, int ranks,
         double expected = v0 ? monkey_expected_count(o->n, L)
                              : monkey_expected_count_chunked(o->n, o->chunk, L);
         printf("%s,%s,%d,%d,%" PRIu64 ",%" PRIu64 ",%" PRIu64 ",%s,%d,%" PRIu64
-               ",%.10g,%.6f,%.0f,%s,%s\n",
-               version, v0 ? "v0" : "chunked", ranks, threads, o->n,
+               ",%.10g,%.6f,%.0f,%s,%s,%.6f,%.6f,%.6f\n",
+               version, kernel_name(o->kernel), ranks, threads, o->n,
                v0 ? o->n : o->chunk, o->seed, t->text[k], L, counts[k],
-               expected, elapsed, (double)o->n / elapsed, host, GIT_SHA);
+               expected, elapsed, (double)o->n / elapsed, host, GIT_SHA,
+               busy_min, busy_max, comm);
     }
     fflush(stdout);
 }

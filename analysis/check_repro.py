@@ -38,6 +38,8 @@ def main() -> int:
     ap.add_argument("--bin", type=Path, default=ROOT / "bin" / "serial")
     ap.add_argument("--compare", type=Path, default=None)
     ap.add_argument("--compare-launcher", default="")
+    ap.add_argument("--compare-args", default="",
+                    help="extra options for the compared binary, e.g. '-k fused'")
     ap.add_argument("-n", default="50000000")
     args = ap.parse_args()
 
@@ -49,10 +51,12 @@ def main() -> int:
                 counts(ref + ["-c", args.n]), counts(ref + ["-k", "v0"]))
 
     if args.compare:
-        other = args.compare_launcher.split() + [str(args.compare), "-n", args.n,
-                                                 "-t", TARGETS, "-s", "7"]
+        other = (args.compare_launcher.split() + [str(args.compare), "-n", args.n,
+                                                  "-t", TARGETS, "-s", "7"]
+                 + args.compare_args.split())
         for chunk in ("2^16", "2^20", "1000003"):
-            ok &= check(f"{args.compare.name} == {args.bin.name} (chunk {chunk})",
+            ok &= check(f"{args.compare.name} {args.compare_args} == {args.bin.name} "
+                        f"(chunk {chunk})",
                         counts(ref + ["-c", chunk]), counts(other + ["-c", chunk]))
 
     print("all reproducibility checks passed" if ok else "FAILED")

@@ -1,0 +1,57 @@
+cores=16 hw_threads=32
+== 1 node vs 2 nodes, n=1.2e11 reps=3
+rep 1
+[haskell:3655447:0:3655447] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+[haskell:3655451:0:3655451] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+[haskell:3655449:0:3655449] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+[haskell:3655452:0:3655452] Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+==== backtrace (tid:3655447) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x782b24e52414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x782b24e525e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x782b24e5278a]
+=================================
+==== backtrace (tid:3655449) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x7fc839669414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x7fc8396695e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x7fc83966978a]
+=================================
+==== backtrace (tid:3655451) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x776ed3030414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x776ed30305e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x776ed303078a]
+=================================
+[haskell:3655451] *** Process received signal ***
+[haskell:3655451] Signal: Segmentation fault (11)
+[haskell:3655451] Signal code:  (-6)
+[haskell:3655451] Failing at address: 0xf43000037c71b
+[haskell:3655447] *** Process received signal ***
+[haskell:3655447] Signal: Segmentation fault (11)
+[haskell:3655447] Signal code:  (-6)
+[haskell:3655447] Failing at address: 0xf43000037c717
+[haskell:3655449] *** Process received signal ***
+[haskell:3655449] Signal: Segmentation fault (11)
+[haskell:3655449] Signal code:  (-6)
+[haskell:3655449] Failing at address: 0xf43000037c719
+==== backtrace (tid:3655452) ====
+ 0  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(ucs_handle_error+0x294) [0x76727b224414]
+ 1  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x285e4) [0x76727b2245e4]
+ 2  /cvmfs/software.eessi.io/versions/2023.06/software/linux/x86_64/amd/zen2/software/UCX/1.14.1-GCCcore-12.3.0/lib64/libucs.so.0(+0x2878a) [0x76727b22478a]
+=================================
+[haskell:3655452] *** Process received signal ***
+[haskell:3655452] Signal: Segmentation fault (11)
+[haskell:3655452] Signal code:  (-6)
+[haskell:3655452] Failing at address: 0xf43000037c71c
+[haskell:3655447] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x782b274a6560]
+[haskell:3655447] *** End of error message ***
+[haskell:3655449] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x7fc83bcbe560]
+[haskell:3655449] *** End of error message ***
+[haskell:3655451] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x776ed9684560]
+[haskell:3655451] *** End of error message ***
+[haskell:3655452] [ 0] /cvmfs/software.eessi.io/versions/2023.06/compat/linux/x86_64/lib64/libc.so.6(+0x38560)[0x767281879560]
+[haskell:3655452] *** End of error message ***
+srun: error: haskell: tasks 9,11,13-14: Segmentation fault
+slurmstepd-haskell: error:  mpi/pmix_v5: _errhandler: haskell [1]: pmixp_client_v2.c:211: Error handler invoked: status = -61, source = [slurm.pmix.31232.1:14]
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd-fortran: error: *** STEP 31232.1 ON fortran CANCELLED AT 2026-11-16T20:46:08 ***
+srun: error: fortran: tasks 0-7: Killed
+srun: error: haskell: tasks 8,10,12,15: Killed

@@ -18,10 +18,11 @@ One-line thesis for the report: *the kernel is embarrassingly parallel, so the i
 - Expected occurrences of a length-L target in n characters: (n − L + 1) / 27^L.
 - Expected characters until the first occurrence (Conway): sum of 27^j over every j where the length-j prefix equals the length-j suffix. For "the", 27^3 ≈ 2.0e4.
 - 27^L grows about 27× per extra character: L=5 → 1.4e7, L=7 → 1.0e10, L=9 → 7.6e12, L=10 → 2.1e14, L=11 → 5.6e15.
-- Measured serial speed on an Apple M3 is about 3.7e8 chars/s with one target. Assuming ~3e8 on a cluster core:
-  - 1 core finds a 7-char target in ~30 s;
-  - 64 cores find "wherefore" (9 chars) in ~6 min on average;
-  - a 10-char target takes ~3 h on 64 cores.
+- Measured on the cluster (EPYC 9745, job 30127): 5.84e8 chars/s on one core. With perfect scaling:
+  - "wherefore" (9 chars) takes ~51 s on 256 cores (one node);
+  - a 10-char target takes ~23 min on one node, or ~11 min on two;
+  - an 11-char target takes ~10 h on one node.
+- Cluster: 2 usable nodes (haskell, julia; fortran planned), each with 256 cores and 512 hardware threads. Details and measured findings are in docs/FINDINGS.md.
 - Headline experiment: **"how many characters can our hardware afford?"** Every 27× speedup (better kernel, more nodes, GPUs) buys one more character of Shakespeare. That gives a scaling story the audience understands immediately.
 
 ## 3. Current state (commit d79ea7f, by Neo)

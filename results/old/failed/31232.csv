@@ -1,0 +1,2 @@
+version,kernel,ranks,threads,n,chunk,seed,target,len,count,expected,time_s,chars_per_s,host,git,busy_min_s,busy_max_s,comm_s,layout
+mpi,chunked,16,1,120000000000,16777216,1,romeo,5,8287,8363.004331,10.443087,11490855676,fortran,40b34f0f15cf,10.392869,10.442958,0.000117,16x1node

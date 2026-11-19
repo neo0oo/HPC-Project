@@ -1,0 +1,6 @@
+cores=16 hw_threads=32
+== 1 node vs 2 nodes, n=1.2e11 reps=3
+rep 1
+rep 2
+rep 3
+done: job 31338

@@ -1,0 +1,221 @@
+cores=4 hw_threads=8
+nvcc: /usr/local/cuda/bin/nvcc
+Cuda compilation tools, release 12.4, V12.4.99
+Build cuda_12.4.r12.4/compiler.33961263_0
+name, memory.total [MiB], compute_cap, driver_version, clocks.max.sm [MHz]
+NVIDIA RTX 6000 Ada Generation, 49140 MiB, 8.9, 580.126.09, 3105 MHz
+== 0. CUDA == serial (exact counts)
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   monkey_cuda  == serial (chunk 2^16)
+ok   monkey_cuda  == serial (chunk 2^20)
+ok   monkey_cuda  == serial (chunk 1000003)
+all reproducibility checks passed
+monkey_cuda kernel=fused n=2e+10
+seed   target        count         expected        z  status
+   1        a    740700002    740740740.741   -1.497  ok
+   1      the      1016833      1016105.147    0.722  ok
+   1     love        37632        37633.522   -0.008  ok
+   1    romeo         1414         1393.834    0.540  ok
+   2        a    740759944    740740740.741    0.706  ok
+   2      the      1015036      1016105.147   -1.061  ok
+   2     love        37533        37633.522   -0.518  ok
+   2    romeo         1406         1393.834    0.326  ok
+   3        a    740747374    740740740.741    0.244  ok
+   3      the      1015236      1016105.147   -0.862  ok
+   3     love        37800        37633.522    0.858  ok
+   3    romeo         1368         1393.834   -0.692  ok
+
+all checks passed
+== 1. block size
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=64 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=128 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=512 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=145408 block=1024 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=64 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=128 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=512 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=145408 block=1024 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=64 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=128 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=512 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=145408 block=1024 chunks=15258790
+== 2. chunk size
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=976562500
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=244140625
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=61035157
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=3814698
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=953675
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=238419
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=976562500
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=244140625
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=61035157
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=3814698
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=953675
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=238419
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=976562500
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=244140625
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=61035157
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=3814698
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=953675
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=238419
+== 3. number of targets
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=145408 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=145408 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=145408 block=256 chunks=15258790
+== 4. headline counts
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=15258790
+rate=851030851634 chars/s -> n=2.553e+14 per headline run
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=218112 block=256 chunks=973892212
+version,kernel,ranks,threads,n,chunk,seed,target,len,count,expected,time_s,chars_per_s,host,git,busy_min_s,busy_max_s,comm_s
+cuda,fused,1,218112,255300000000000,262144,1,wherefore,9,37,33.47832211,365.283750,698908725066,haskell,48e5ea0b5800,365.283750,365.283750,0.000000
+cuda,fused,1,218112,255300000000000,262144,1,friar john,10,1,1.239933126,365.283750,698908725066,haskell,48e5ea0b5800,365.283750,365.283750,0.000000
+== 5. OpenACC (nvhpc) vs OpenMP on the same 8 CPU cores
+main:
+     46, Generating implicit firstprivate(i)
+         Generating NVIDIA GPU code
+         48, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+             Generating reduction(+:warm)
+     46, Generating implicit copy(warm) [if not already present]
+     53, Generating copyin(mask[:],code[:]) [if not already present]
+         Generating implicit copy(c3) [if not already present]
+         Generating implicit firstprivate(i,nchunks)
+         Generating NVIDIA GPU code
+         56, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+             Generating reduction(+:c0,c1,c3,c2)
+        178, #pragma acc loop seq
+        180, #pragma acc loop seq
+        182, #pragma acc loop seq
+        183, #pragma acc loop seq
+        186, #pragma acc loop seq
+        191, #pragma acc loop seq
+        192, #pragma acc loop seq
+     53, Local memory used for .inl_r_361,cnt
+         Generating implicit copy(c0,c1,c2) [if not already present]
+     56, Generating implicit firstprivate(chunk,seed,n)
+         178, Loop carried scalar dependence for .inl_.inl_sm_68_366 at line 178
+         180, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Loop carried scalar dependence for .inl_w_372 at line 184,183
+              Scalar last value needed after loop for .inl_w_372 at line 191
+              Loop carried dependence of -> prevents vectorization
+              Complex loop carried dependence of mask,code,cnt prevents parallelization
+              Loop carried dependence of cnt prevents parallelization
+              Loop carried backward dependence of cnt prevents vectorization
+         182, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Scalar last value needed after loop for .inl_.inl_m_86_389 at line 182
+         183, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Scalar last value needed after loop for .inl_.inl_m_102_407 at line 183
+         186, Loop is parallelizable
+         188, Accelerator restriction: induction variable live-out from loop: .inl_i_373
+         189, Accelerator restriction: induction variable live-out from loop: .inl_i_373
+         191, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Scalar last value needed after loop for .inl_.inl_m_128_442 at line 191
+         192, Loop is parallelizable
+main:
+     46, Generating Multicore code
+         48, #pragma acc loop gang
+             Generating reduction(+:warm)
+     53, Generating Multicore code
+         56, #pragma acc loop gang
+             Generating reduction(+:c0,c1,c3,c2)
+         178, Loop carried scalar dependence for .inl_.inl_sm_68_366 at line 178
+         180, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Loop carried scalar dependence for .inl_w_372 at line 183,184
+              Scalar last value needed after loop for .inl_w_372 at line 191
+              Loop carried dependence of -> prevents vectorization
+              Complex loop carried dependence of mask,code,cnt prevents parallelization
+              Loop carried dependence of cnt prevents parallelization
+              Loop carried backward dependence of cnt prevents vectorization
+         182, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Scalar last value needed after loop for .inl_.inl_m_86_389 at line 182
+         183, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Scalar last value needed after loop for .inl_.inl_m_102_407 at line 183
+         186, Loop is parallelizable
+         188, Accelerator restriction: induction variable live-out from loop: .inl_i_373
+         189, Accelerator restriction: induction variable live-out from loop: .inl_i_373
+         191, Complex loop carried dependence of -> prevents parallelization
+              Loop carried dependence of -> prevents parallelization
+              Loop carried backward dependence of -> prevents vectorization
+              Scalar last value needed after loop for .inl_.inl_m_128_442 at line 191
+         192, Loop is parallelizable
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   acc_gpu  == serial (chunk 2^16)
+ok   acc_gpu  == serial (chunk 2^20)
+ok   acc_gpu  == serial (chunk 1000003)
+all reproducibility checks passed
+== 6. Nsight (optional)
+
+ Time (%)  Total Time (ns)  Num Calls   Avg (ns)     Med (ns)    Min (ns)   Max (ns)   StdDev (ns)                Name               
+ --------  ---------------  ---------  -----------  -----------  ---------  ---------  -----------  ---------------------------------
+     55.1        110654974          1  110654974.0  110654974.0  110654974  110654974          0.0  cudaEventSynchronize             
+     44.2         88741842          2   44370921.0   44370921.0       6630   88735212   62740582.0  cudaMemcpyToSymbol               
+      0.6          1124403          1    1124403.0    1124403.0    1124403    1124403          0.0  cudaGetDeviceProperties_v2_v12000
+      0.0            90563          1      90563.0      90563.0      90563      90563          0.0  cudaFree                         
+      0.0            68852          1      68852.0      68852.0      68852      68852          0.0  cudaMalloc                       
+      0.0            27240          1      27240.0      27240.0      27240      27240          0.0  cudaMemcpy                       
+      0.0            21431          1      21431.0      21431.0      21431      21431          0.0  cudaLaunchKernel                 
+      0.0            12148          2       6074.0       6074.0       3485       8663       3661.4  cudaEventRecord                  
+      0.0            10936          1      10936.0      10936.0      10936      10936          0.0  cudaMemset                       
+      0.0             9134          2       4567.0       4567.0       1102       8032       4900.2  cudaEventCreate                  
+      0.0             3816          1       3816.0       3816.0       3816       3816          0.0  cuModuleGetLoadingMode           
+
+[6/8] Executing 'cuda_gpu_kern_sum' stats report
+
+ Time (%)  Total Time (ns)  Instances   Avg (ns)     Med (ns)    Min (ns)   Max (ns)   StdDev (ns)                                                  Name                                                
+ --------  ---------------  ---------  -----------  -----------  ---------  ---------  -----------  ----------------------------------------------------------------------------------------------------
+    100.0        110659447          1  110659447.0  110659447.0  110659447  110659447          0.0  void count_kernel<(int)1>(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long…
+
+[7/8] Executing 'cuda_gpu_mem_time_sum' stats report
+
+ Time (%)  Total Time (ns)  Count  Avg (ns)  Med (ns)  Min (ns)  Max (ns)  StdDev (ns)           Operation          
+ --------  ---------------  -----  --------  --------  --------  --------  -----------  ----------------------------
+     42.2              960      1     960.0     960.0       960       960          0.0  [CUDA memcpy Device-to-Host]
+     33.8              768      2     384.0     384.0       384       384          0.0  [CUDA memcpy Host-to-Device]
+     24.0              545      1     545.0     545.0       545       545          0.0  [CUDA memset]               
+
+[8/8] Executing 'cuda_gpu_mem_size_sum' stats report
+
+ Total (MB)  Count  Avg (MB)  Med (MB)  Min (MB)  Max (MB)  StdDev (MB)           Operation          
+ ----------  -----  --------  --------  --------  --------  -----------  ----------------------------
+      0.000      2     0.000     0.000     0.000     0.000        0.000  [CUDA memcpy Host-to-Device]
+      0.000      1     0.000     0.000     0.000     0.000        0.000  [CUDA memcpy Device-to-Host]
+      0.000      1     0.000     0.000     0.000     0.000        0.000  [CUDA memset]               
+
+Generated:
+    /home/hpcb05/HPC-Project/results/logs/gpu_32120_nsys.nsys-rep
+    /home/hpcb05/HPC-Project/results/logs/gpu_32120_nsys.sqlite
+==PROF== Connected to process 173434 (/home/hpcb05/HPC-Project/build/32120/monkey_cuda)
+==ERROR== ERR_NVGPUCTRPERM - The user does not have permission to access NVIDIA GPU Performance Counters on the target device 0. For instructions on enabling permissions and to get more information see https://developer.nvidia.com/ERR_NVGPUCTRPERM
+# gpu=NVIDIA RTX 6000 Ada Generation sm=8.9 threads=152832 block=256 chunks=152588
+cuda,fused,1,152832,10000000000,65536,1,romeo,5,704,696.8746573,0.013469,742440787116,haskell,48e5ea0b5800,0.013469,0.013469,0.000000
+==PROF== Disconnected from process 173434
+==WARNING== No kernels were profiled.
+ncu failed (often needs GPU counter permissions)
+done: job 32120

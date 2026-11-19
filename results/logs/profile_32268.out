@@ -1,0 +1,63 @@
+cores=1 hw_threads=2
+== timing breakdown (prof)
+== hardware counters (prof_papi)
+perf_event_paranoid=4
+
+The following have been reloaded with a version change:
+  1) GCCcore/12.3.0 => GCCcore/13.2.0
+
+Available PAPI preset and user defined events plus hardware information.
+--------------------------------------------------------------------------------
+PAPI version             : 7.1.0.0
+Operating system         : Linux 6.17.2-1-pve
+Vendor string and code   : AuthenticAMD (2, 0x2)
+Model string and code    : AMD EPYC 9755 128-Core Processor (2, 0x2)
+CPU revision             : 1.000000
+CPUID                    : Family/Model/Stepping 26/2/1, 0x1a/0x02/0x01
+CPU Max MHz              : 4122
+CPU Min MHz              : 1212
+Total cores              : 512
+SMT threads per core     : 2
+Cores per socket         : 128
+Sockets                  : 2
+Cores per NUMA region    : 256
+NUMA regions             : 2
+Running in a VM          : no
+Number Hardware Counters : 0
+Max Multiplex Counters   : 384
+Fast counter read (rdpmc): no
+--------------------------------------------------------------------------------
+
+================================================================================
+  PAPI Preset Events
+================================================================================
+    Name        Code    Deriv Description (Note)
+
+--------------------------------------------------------------------------------
+Of 0 available events, 0 are derived.
+
+No events detected!  Check papi_component_avail to find out why.
+
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+build/32268/prof_papi: error while loading shared libraries: libpapi.so.7.1: cannot open shared object file: No such file or directory
+PAPI run failed; timing breakdown above is the profiling evidence
+done: job 32268

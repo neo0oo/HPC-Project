@@ -1,0 +1,43 @@
+cores=32 hw_threads=64
+== exact-count check vs serial (1, 7, 32 threads)
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   omp == serial (chunk 2^16)
+ok   omp == serial (chunk 2^20)
+ok   omp == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   omp == serial (chunk 2^16)
+ok   omp == serial (chunk 2^20)
+ok   omp == serial (chunk 1000003)
+all reproducibility checks passed
+ok   same run twice gives identical counts
+ok   one chunk (chunk >= n) equals the v0 single stream
+ok   omp == serial (chunk 2^16)
+ok   omp == serial (chunk 2^20)
+ok   omp == serial (chunk 1000003)
+all reproducibility checks passed
+== strong scaling n=1.2e11 targets=romeo cores=32 hw=64 reps=3
+rep 1 threads 1
+rep 1 threads 2
+rep 1 threads 4
+rep 1 threads 8
+rep 1 threads 16
+rep 1 threads 32
+rep 1 threads 64 (SMT)
+rep 2 threads 1
+rep 2 threads 2
+rep 2 threads 4
+rep 2 threads 8
+rep 2 threads 16
+rep 2 threads 32
+rep 2 threads 64 (SMT)
+rep 3 threads 1
+rep 3 threads 2
+rep 3 threads 4
+rep 3 threads 8
+rep 3 threads 16
+rep 3 threads 32
+rep 3 threads 64 (SMT)
+done: job 31203

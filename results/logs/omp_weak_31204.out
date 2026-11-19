@@ -1,0 +1,39 @@
+cores=32 hw_threads=64
+== weak scaling n/thread=1e10 targets=romeo cores=32 reps=3
+rep 1 threads 1 bind close n 10000000000
+rep 1 threads 1 bind spread n 10000000000
+rep 1 threads 2 bind close n 20000000000
+rep 1 threads 2 bind spread n 20000000000
+rep 1 threads 4 bind close n 40000000000
+rep 1 threads 4 bind spread n 40000000000
+rep 1 threads 8 bind close n 80000000000
+rep 1 threads 8 bind spread n 80000000000
+rep 1 threads 16 bind close n 160000000000
+rep 1 threads 16 bind spread n 160000000000
+rep 1 threads 32 bind close n 320000000000
+rep 1 threads 32 bind spread n 320000000000
+rep 2 threads 1 bind close n 10000000000
+rep 2 threads 1 bind spread n 10000000000
+rep 2 threads 2 bind close n 20000000000
+rep 2 threads 2 bind spread n 20000000000
+rep 2 threads 4 bind close n 40000000000
+rep 2 threads 4 bind spread n 40000000000
+rep 2 threads 8 bind close n 80000000000
+rep 2 threads 8 bind spread n 80000000000
+rep 2 threads 16 bind close n 160000000000
+rep 2 threads 16 bind spread n 160000000000
+rep 2 threads 32 bind close n 320000000000
+rep 2 threads 32 bind spread n 320000000000
+rep 3 threads 1 bind close n 10000000000
+rep 3 threads 1 bind spread n 10000000000
+rep 3 threads 2 bind close n 20000000000
+rep 3 threads 2 bind spread n 20000000000
+rep 3 threads 4 bind close n 40000000000
+rep 3 threads 4 bind spread n 40000000000
+rep 3 threads 8 bind close n 80000000000
+rep 3 threads 8 bind spread n 80000000000
+rep 3 threads 16 bind close n 160000000000
+rep 3 threads 16 bind spread n 160000000000
+rep 3 threads 32 bind close n 320000000000
+rep 3 threads 32 bind spread n 320000000000
+done: job 31204

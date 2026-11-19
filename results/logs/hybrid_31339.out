@@ -1,0 +1,30 @@
+cores=16 hw_threads=32
+== hybrid sweep on 2 nodes x 16 cores, n=1.2e11 reps=3
+rep 1 ranks 32 threads 1
+rep 1 ranks 16 threads 2
+srun: Job step's --cpus-per-task value exceeds that of job (2 > 1). Job step may never run.
+rep 1 ranks 8 threads 4
+srun: Job step's --cpus-per-task value exceeds that of job (4 > 1). Job step may never run.
+rep 1 ranks 4 threads 8
+srun: Job step's --cpus-per-task value exceeds that of job (8 > 1). Job step may never run.
+rep 1 ranks 2 threads 16
+srun: Job step's --cpus-per-task value exceeds that of job (16 > 1). Job step may never run.
+rep 2 ranks 32 threads 1
+rep 2 ranks 16 threads 2
+srun: Job step's --cpus-per-task value exceeds that of job (2 > 1). Job step may never run.
+rep 2 ranks 8 threads 4
+srun: Job step's --cpus-per-task value exceeds that of job (4 > 1). Job step may never run.
+rep 2 ranks 4 threads 8
+srun: Job step's --cpus-per-task value exceeds that of job (8 > 1). Job step may never run.
+rep 2 ranks 2 threads 16
+srun: Job step's --cpus-per-task value exceeds that of job (16 > 1). Job step may never run.
+rep 3 ranks 32 threads 1
+rep 3 ranks 16 threads 2
+srun: Job step's --cpus-per-task value exceeds that of job (2 > 1). Job step may never run.
+rep 3 ranks 8 threads 4
+srun: Job step's --cpus-per-task value exceeds that of job (4 > 1). Job step may never run.
+rep 3 ranks 4 threads 8
+srun: Job step's --cpus-per-task value exceeds that of job (8 > 1). Job step may never run.
+rep 3 ranks 2 threads 16
+srun: Job step's --cpus-per-task value exceeds that of job (16 > 1). Job step may never run.
+done: job 31339
