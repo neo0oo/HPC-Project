@@ -1,0 +1,3 @@
+# Only needed for the plots (analysis/figures.py, summarize.py --plots, scaling.py --plot).
+# Same version as the cluster module matplotlib/3.7.2-gfbf-2023a (Python 3.11.4).
+matplotlib==3.7.2

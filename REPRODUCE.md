@@ -14,7 +14,7 @@ git checkout <tag used in the report>
 
 `env/modules.sh` loads `OpenMPI/4.1.5-GCC-12.3.0` (GCC 12.3.0). Compiler flags are in the `Makefile` (`make flags` prints them). Every job also stores its exact flags, modules, commit and CPU model in `results/logs/<job>_<id>.env`.
 
-Python scripts only need the standard library, except plotting.
+Python is 3.11.4 on the cluster. The scripts only need the standard library, except plotting, which needs matplotlib 3.7.2 (`module load matplotlib/3.7.2-gfbf-2023a` on the cluster, or `pip install -r env/requirements.txt` elsewhere).
 
 ## 2. Phase 0: describe the cluster
 
@@ -87,6 +87,13 @@ Summary of everything (any time; sections without data are skipped):
 python3 analysis/summarize.py > results/summary.txt
 module load matplotlib/3.7.2-gfbf-2023a && python3 analysis/summarize.py --plots results/figures
 python3 analysis/figures.py          # the other report figures (needs matplotlib)
+```
+
+Slurm accounting for every job that has a provenance file (elapsed time, CPU time, peak memory), run on the cluster:
+
+```bash
+ids=$(ls results/logs/*.env | sed -E 's/.*_([0-9]+)\.env/\1/' | sort -un | paste -sd, -)
+sacct -j "$ids" --format=JobID,JobName,Partition,NodeList,AllocCPUS,Elapsed,TotalCPU,MaxRSS,State > results/logs/sacct.txt
 ```
 
 Local testing without MPI or GPUs: `make LOCAL_MPI_STUB=1 test` (single-rank MPI stand-in, see `src/mpi_stub/`).

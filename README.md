@@ -1,6 +1,6 @@
 # Infinite Monkeys on SciTech
 
-Many simulated "monkeys" type uniformly random characters (a–z and space, 27 symbols). We count how often short Romeo and Juliet targets appear, measure how long the first occurrence takes, and compare everything with exact theory. The work is spread over cores and nodes with OpenMP and MPI through Slurm, and we measure speedup, efficiency, bottlenecks and optimizations.
+Many simulated "monkeys" type uniformly random characters (a–z and space, 27 symbols). We count how often short Romeo and Juliet targets appear, measure how long the first occurrence takes, and compare everything with exact theory. The work is spread over cores and nodes with OpenMP and MPI through Slurm, and we measure speedup, efficiency, bottlenecks and optimizations. The same kernel is also ported to CUDA and OpenACC as the additional-technology experiment.
 
 Every extra character in a target is 27× rarer, so every 27× speedup buys one more letter of Shakespeare.
 
@@ -32,11 +32,13 @@ src/        monkey.h (baseline kernel + theory), fused.h (optimized kernel), ker
             rng.h (xoshiro256**), cli.h (options/CSV), serial.c, omp.c, mpi.c (mpi + hybrid),
             first_match.c (time-to-solution), prof.c (profiling), acc.c (OpenACC), mpi_stub/
 cuda/       monkey.cu (CUDA version)
-env/        modules.sh (toolchain), cluster/ (probe output per node type)
+env/        modules.sh (toolchain), requirements.txt (Python packages for plots),
+            cluster/ (probe output per node type)
 slurm/      one .sbatch per experiment, common.sh, run_all.sh
 data/       targets/*.txt
 results/    raw/<experiment>/<job-id>.csv, logs/ (job output + provenance .env)
 analysis/   theory.py, check_theory.py, check_repro.py, check_first.py,
-            summarize.py (all tables), figures.py (report figures)
-docs/       PLAN.md, report, EuroHPC plan, slides
+            scaling.py (one scaling table/plot), summarize.py (all tables),
+            figures.py (report figures)
+docs/       PLAN.md, FINDINGS.md (all measured results)
 ```
