@@ -40,5 +40,5 @@ results/    raw/<experiment>/<job-id>.csv, logs/ (job output + provenance .env)
 analysis/   theory.py, check_theory.py, check_repro.py, check_first.py,
             scaling.py (one scaling table/plot), summarize.py (all tables),
             figures.py (report figures)
-docs/       PLAN.md, FINDINGS.md (all measured results)
+docs/       PLAN.md, FINDINGS.md (all measured results), EUROHPC_PLAN.md (scale-up plan)
 ```
