@@ -4,9 +4,10 @@ Running record of measured results, with job IDs, for the report.
 
 ## Phase 0: cluster (probe job 30126, 2026-11-15)
 
-- **Nodes:** haskell (2× RTX 6000 Ada) and julia (1× RTX PRO 6000 Blackwell) at the time of the probe. fortran (RTX PRO 6000 Blackwell) joined later and ran many of our jobs. All three have the same CPUs. The nodes are shared between the cpu, gpu and interactive partitions. Time limits: cpu 7 days, gpu 3 days, interactive 8 hours.
+- **Nodes:** haskell (2× RTX 6000 Ada) and julia (1× RTX PRO 6000 Blackwell) at the time of the probe. fortran (RTX PRO 6000 Blackwell) joined later and ran many of our jobs. julia has different CPUs from the other two (see below). The nodes are shared between the cpu, gpu and interactive partitions. Time limits: cpu 7 days, gpu 3 days, interactive 8 hours.
+- **CPUs differ by node** (`cpu_model` in every `results/logs/*.env`): julia has 2× AMD EPYC 9745 (Zen 5c, the dense-core variant), haskell and fortran have 2× AMD EPYC 9755 (Zen 5). Both models have 128 cores per socket. The probe ran on julia, so the cache, memory and frequency figures below are julia's.
 - **Each node:**
-  - 2× AMD EPYC 9745 (Zen 5): 128 cores per socket, so 256 cores and 512 hardware threads (SMT on)
+  - 2 sockets × 128 cores, so 256 cores and 512 hardware threads (SMT on)
   - 2 NUMA nodes
   - L2 1 MiB per core, L3 512 MiB total
   - ~400–750 GB RAM
@@ -107,7 +108,7 @@ All ranks must agree regularly whether anyone has found the target. K = chunks p
 - No hardware counters available to students: `perf_event_paranoid=4` blocks PAPI (and the PAPI module's library failed to load), and Nsight Compute reports `ERR_NVGPUCTRPERM` on the GPUs. We report this as a limitation and use application instrumentation instead: the program times a generate-only pass ("gen") and the full kernels, so matching cost = kernel − gen.
 - v2 profile (haskell, ns per character): generating the random character 0.61; baseline with 1/4/16 targets 1.38/3.68/12.91 (matching 0.77/3.08/12.30); fused with 1/4/16 targets 1.05/1.71/1.75 (matching 0.44/1.10/1.14).
 - So after the optimization the bottleneck is the random number generator itself: 58% of the time with 1 target, 35% with 16. The next step would be generating several characters per RNG call or a SIMD generator.
-- The same profile on julia (v1, job 31236) gave gen = 0.78 ns: julia's cores are ~25% slower than haskell/fortran for this code (also seen in Phase 1: 5.84e8 vs ~7.2e8 characters/s). Compare kernels only within one job.
+- The same profile on julia (v1, job 31236) gave gen = 0.78 ns: julia's cores (EPYC 9745) are ~25% slower than haskell/fortran (EPYC 9755) for this code (also seen in Phase 1: 5.84e8 vs ~7.2e8 characters/s). Compare kernels only within one job.
 
 ### Sensitivity: chunk size × OpenMP schedule (job 31235, fused, 32 threads)
 
