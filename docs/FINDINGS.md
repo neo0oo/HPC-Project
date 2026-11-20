@@ -12,7 +12,7 @@ Running record of measured results, with job IDs, for the report.
   - L2 1 MiB per core, L3 512 MiB total
   - ~400–750 GB RAM
   - governor `performance`, boost on, max 3.7 GHz
-- **haskell and fortran** (probe jobs 33020 and 33021, 2026-11-20, `env/cluster/cpu_{haskell,fortran}.txt`): the two nodes are identical. Each has 2× EPYC 9755 (2 × 128 cores, 512 threads), max 4.12 GHz, L2 1 MiB per core, L3 1 GiB total (32 × 32 MiB), governor `performance`, boost on and 2 NUMA nodes. RAM is 754 GB on fortran and 440 GB on haskell. So these nodes have twice julia's L3 and a higher top clock than julia, which fits their ~25% faster RNG throughput (see Profiling). The julia probe file from job 30126 was not kept in the repository; only its log `results/logs/probe_30126.out` and the numbers above remain.
+- **haskell and fortran** (probe jobs 33020 and 33021, 2026-11-20, `env/cluster/cpu_{haskell,fortran}.txt`): the two nodes are identical. Each has 2× EPYC 9755 (2 × 128 cores, 512 threads), max 4.12 GHz, L2 1 MiB per core, L3 1 GiB total (32 × 32 MiB), governor `performance`, boost on and 2 NUMA nodes. RAM is 754 GB on fortran and 440 GB on haskell. So these nodes have twice julia's L3 and a higher top clock than julia, which fits their ~25% faster RNG throughput (see Profiling). The julia probe from job 30126 is `env/cluster/cpu_julia.txt`.
 - **Toolchain:** OpenMPI 4.1.5 / GCC 12.3.0 from EESSI (the stack is built for zen2), Python 3.11.4. `srun --mpi` supports pmix and pmi2.
 - **Profiling:** `perf` and LIKWID are absent. The `PAPI/7.1.0` module provides hardware counters. Tracing modules: OTF2, Cube, OPARI2, Paraver.
 - **Other:** `nvhpc/25.7` provides OpenACC via `nvc`. `hpc-course-cuda/12.8.1` provides CUDA.
