@@ -12,6 +12,7 @@ Running record of measured results, with job IDs, for the report.
   - L2 1 MiB per core, L3 512 MiB total
   - ~400–750 GB RAM
   - governor `performance`, boost on, max 3.7 GHz
+- **haskell and fortran** (probe jobs 33020 and 33021, 2026-11-20, `env/cluster/cpu_{haskell,fortran}.txt`): the two nodes are identical. Each has 2× EPYC 9755 (2 × 128 cores, 512 threads), max 4.12 GHz, L2 1 MiB per core, L3 1 GiB total (32 × 32 MiB), governor `performance`, boost on and 2 NUMA nodes. RAM is 754 GB on fortran and 440 GB on haskell. So these nodes have twice julia's L3 and a higher top clock than julia, which fits their ~25% faster RNG throughput (see Profiling). The julia probe file from job 30126 was not kept in the repository; only its log `results/logs/probe_30126.out` and the numbers above remain.
 - **Toolchain:** OpenMPI 4.1.5 / GCC 12.3.0 from EESSI (the stack is built for zen2), Python 3.11.4. `srun --mpi` supports pmix and pmi2.
 - **Profiling:** `perf` and LIKWID are absent. The `PAPI/7.1.0` module provides hardware counters. Tracing modules: OTF2, Cube, OPARI2, Paraver.
 - **Other:** `nvhpc/25.7` provides OpenACC via `nvc`. `hpc-course-cuda/12.8.1` provides CUDA.
@@ -109,6 +110,11 @@ All ranks must agree regularly whether anyone has found the target. K = chunks p
 - v2 profile (haskell, ns per character): generating the random character 0.61; baseline with 1/4/16 targets 1.38/3.68/12.91 (matching 0.77/3.08/12.30); fused with 1/4/16 targets 1.05/1.71/1.75 (matching 0.44/1.10/1.14).
 - So after the optimization the bottleneck is the random number generator itself: 58% of the time with 1 target, 35% with 16. The next step would be generating several characters per RNG call or a SIMD generator.
 - The same profile on julia (v1, job 31236) gave gen = 0.78 ns: julia's cores (EPYC 9745) are ~25% slower than haskell/fortran (EPYC 9755) for this code (also seen in Phase 1: 5.84e8 vs ~7.2e8 characters/s). Compare kernels only within one job.
+- **Nsight Systems timeline of the CUDA kernel** (`nsys stats`, `results/logs/nsys_stats.txt`, 1e11 characters, target "romeo", chunk 2^16):
+  - **GPU kernel time:** 91.6 ms on Blackwell (job 31622), 91.1 ms on Blackwell (job 32119) and 110.7 ms on Ada (job 32120). That is 1.09e12, 1.10e12 and 9.0e11 characters/s. These numbers are in line with the throughput the program measures itself (1.15e12 and 8.6e11), and the two Blackwell runs agree to within 0.6%.
+  - **Memory transfers:** host↔device copies and memsets take under 2 µs in total, because only the targets go in and only the counts come out. The kernel is 100% of GPU time, so PCIe transfers are not a bottleneck.
+  - **Startup:** the first `cudaMemcpyToSymbol` takes 89–96 ms. That is the one-time CUDA context and module load, which is as long as the 1e11-character kernel itself. It is a fixed cost, so for the long runs (3.5e14 characters, ~6 minutes) it is negligible, but it makes short GPU runs look slower than they are.
+  - Nsight Compute (per-kernel occupancy and memory counters) is still blocked by `ERR_NVGPUCTRPERM`.
 
 ### Sensitivity: chunk size × OpenMP schedule (job 31235, fused, 32 threads)
 
